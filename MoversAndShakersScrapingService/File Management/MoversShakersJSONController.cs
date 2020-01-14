@@ -87,6 +87,7 @@ namespace MoversAndShakersScrapingService.File_Management
 
             if (fileSystem.IsFileExists(fileName))
             {
+                var test = fileSystem.ReadJsonFile(fileName);
                 return JsonConvert.DeserializeObject<MoverCardDataModel>(fileSystem.ReadJsonFile(fileName));
             }
             else

@@ -15,7 +15,7 @@ namespace MoversAndShakersScrapingService.Helpers
             var option = new ChromeOptions();
             option.AddArgument("--headless");
             IWebDriver driver = new ChromeDriver(@"\\DESKTOP-JF26JGH\ChromeDriver", option);
-            driver.Manage().Window.Maximize();
+            //driver.Manage().Window.Maximize();
             try
             {
                 driver.Navigate().GoToUrl(url);

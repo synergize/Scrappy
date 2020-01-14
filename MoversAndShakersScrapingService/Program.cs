@@ -25,7 +25,7 @@ namespace MoversAndShakersScrapingService
                 var newWeeklyDecrease = Format.GetListMoversShakesTable(MoversShakersTableEnum.WeeklyDecrease, formatName, MoversShakersMappings.WeeklyDecreaseXpath);
                 var oldWeeklyDecrease = MoversShakersJSONController.ReadMoversShakersJsonByName($"{MoversShakersTableEnum.WeeklyDecrease.ToString()}_{formatName.ToString()}.json");
             }
-
+            Console.WriteLine("Job Complete..");
             //MoversShakersJSONController.WriteMoverShakersJsonByFileName(DailyList, $"{movertype.ToString()}_{format.ToString()}.json");
         }
     }

@@ -27,12 +27,15 @@ namespace MoversAndShakersScrapingService.Scrapers
                 }
             }
 
-            public List<MoverCardDataModel> GetListMoversShakesTable(MoversShakersTableEnum movertype, MTGFormatsEnum format, string elementXPath)
+            public MoverCardDataModel GetListMoversShakesTable(MoversShakersTableEnum movertype, MTGFormatsEnum format, string elementXPath)
             {
                 try
-                {
-                    MoverCardDataModel NewCard = new MoverCardDataModel();
-                    List<MoverCardDataModel> DailyList = new List<MoverCardDataModel>();
+                {   
+                    
+                    var NewCard = new MoverCardDataModel.CardInfo();
+                    var DailyList = new MoverCardDataModel();
+                    DailyList.MoversAndShakers = new List<MoverCardDataModel.CardInfo>();
+                    
                     driver = BuildDriver.CreateDriver($"https://www.mtggoldfish.com/movers/paper/{format.ToString()}");
                     var DailyChangeIncrease = driver.FindElements(By.XPath(elementXPath));
                     int elementCounter = 0;
@@ -58,19 +61,19 @@ namespace MoversAndShakersScrapingService.Scrapers
                             case 2:
                                 NewCard.ChangePercentage = item.Text;
                                 elementCounter = 0;
-                                DailyList.Add(NewCard);
+                                DailyList.MoversAndShakers.Add(NewCard);
                                 NewCard.Name = CardNames[nameCounter];
                                 nameCounter++;
-                                NewCard = new MoverCardDataModel();
+                                NewCard = new MoverCardDataModel.CardInfo();
                                 break;
                         }
 
                     }
 
                     //MoversShakersJSONController.WriteMoverShakersJsonByFileName(DailyList, $"{movertype.ToString()}_{format.ToString()}.json");
-                    //Console.WriteLine($"## Successfully created {movertype.ToString()}_{format.ToString()}.json ##");
-                    //driver.Close();
-                    //Console.WriteLine("Closing Driver...");
+                    Console.WriteLine($"## Successfully created {movertype.ToString()}_{format.ToString()}.json ##");
+                    driver.Close();
+                    Console.WriteLine("Closing Driver...");
                     return DailyList;
 
                 }
