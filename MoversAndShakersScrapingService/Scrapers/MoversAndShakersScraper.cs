@@ -34,7 +34,7 @@ namespace MoversAndShakersScrapingService.Scrapers
                     
                     var NewCard = new MoverCardDataModel.CardInfo();
                     var DailyList = new MoverCardDataModel();
-                    DailyList.MoversAndShakers = new List<MoverCardDataModel.CardInfo>();
+                    DailyList.ListOfCards = new List<MoverCardDataModel.CardInfo>();
                     
                     driver = BuildDriver.CreateDriver($"https://www.mtggoldfish.com/movers/paper/{format.ToString()}");
                     var DailyChangeIncrease = driver.FindElements(By.XPath(elementXPath));
@@ -61,7 +61,7 @@ namespace MoversAndShakersScrapingService.Scrapers
                             case 2:
                                 NewCard.ChangePercentage = item.Text;
                                 elementCounter = 0;
-                                DailyList.MoversAndShakers.Add(NewCard);
+                                DailyList.ListOfCards.Add(NewCard);
                                 NewCard.Name = CardNames[nameCounter];
                                 nameCounter++;
                                 NewCard = new MoverCardDataModel.CardInfo();
@@ -70,7 +70,7 @@ namespace MoversAndShakersScrapingService.Scrapers
 
                     }
 
-                    //MoversShakersJSONController.WriteMoverShakersJsonByFileName(DailyList, $"{movertype.ToString()}_{format.ToString()}.json");
+                    MoversShakersJSONController.WriteMoverShakersJsonByFileName(DailyList, $"{movertype.ToString()}_{format.ToString()}.json");
                     Console.WriteLine($"## Successfully created {movertype.ToString()}_{format.ToString()}.json ##");
                     driver.Close();
                     Console.WriteLine("Closing Driver...");

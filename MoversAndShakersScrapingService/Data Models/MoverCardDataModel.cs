@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace MoversAndShakersScrapingService.Data_Models
 {
@@ -11,6 +12,8 @@ namespace MoversAndShakersScrapingService.Data_Models
             public string TotalPrice { get; set; }
             public string ChangePercentage { get; set; }
         }
-        public List<CardInfo> MoversAndShakers { get; set; }
+
+        [JsonProperty("MoversAndShakersData")]
+        public List<CardInfo> ListOfCards { get; set; }
     }
 }
