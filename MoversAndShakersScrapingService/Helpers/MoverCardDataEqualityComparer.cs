@@ -1,5 +1,4 @@
-﻿using MoversAndShakersScrapingService.Data_Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using static MoversAndShakersScrapingService.Data_Models.MoverCardDataModel;
 
 namespace MoversAndShakersScrapingService.Helpers

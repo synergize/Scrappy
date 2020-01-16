@@ -14,6 +14,7 @@ namespace MoversAndShakersScrapingService.Scrapers
         {
             private GetSeleniumDriver BuildDriver;
             private IWebDriver driver;
+
             public ScrapeMoversShakers()
             {
                 try
@@ -30,8 +31,7 @@ namespace MoversAndShakersScrapingService.Scrapers
             public MoverCardDataModel GetListMoversShakesTable(MoversShakersTableEnum movertype, MTGFormatsEnum format, string elementXPath)
             {
                 try
-                {   
-                    
+                {                       
                     var NewCard = new MoverCardDataModel.CardInfo();
                     var DailyList = new MoverCardDataModel();
                     DailyList.ListOfCards = new List<MoverCardDataModel.CardInfo>();
@@ -41,7 +41,6 @@ namespace MoversAndShakersScrapingService.Scrapers
                     int elementCounter = 0;
                     int nameCounter = 0;
                     string[] CardNames = DetermineCardNames(movertype);
-
 
                     foreach (var item in DailyChangeIncrease)
                     {
@@ -101,19 +100,20 @@ namespace MoversAndShakersScrapingService.Scrapers
                         return GetWeeklyDecreaseNames();
                 }
             }
+
             private string[] GetDailyIncreaseNames()
             {
                 string[] NameArry = new string[10];
 
                 for (int i = 0; i < NameArry.Length; i++)
                 {
-
                     var DailyName = driver.FindElement(By.XPath($"/html/body/main/div[6]/div[1]/div/div/div[1]/table/tbody/tr[{i + 1}]/td[4]/a"));
                     NameArry[i] = DailyName.Text;
                 }
                 return NameArry;
 
             }
+
             private string[] GetDailyDecreaseNames()
             {
                 string[] NameArry = new string[10];
@@ -125,6 +125,7 @@ namespace MoversAndShakersScrapingService.Scrapers
                 }
                 return NameArry;
             }
+
             private string[] GetWeeklyIncreaseNames()
             {
                 string[] NameArry = new string[10];
@@ -136,6 +137,7 @@ namespace MoversAndShakersScrapingService.Scrapers
                 }
                 return NameArry;
             }
+
             private string[] GetWeeklyDecreaseNames()
             {
                 string[] NameArry = new string[10];

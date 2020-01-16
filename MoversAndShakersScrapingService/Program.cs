@@ -58,6 +58,13 @@ namespace MoversAndShakersScrapingService
             Console.WriteLine("Job Complete..");
         }
 
+        /// <summary>
+        /// Takes in two objects and will run them through an IEqualityComparer to determine if they're equal. If they're not, we create a new JSON document.
+        /// </summary>
+        /// <param name="newDailyIncrease"></param>
+        /// <param name="oldDailyIncrease"></param>
+        /// <param name="movertype"></param>
+        /// <param name="format"></param>
         private void DetermineNewData(MoverCardDataModel newDailyIncrease, MoverCardDataModel oldDailyIncrease, MoversShakersTableEnum movertype, MTGFormatsEnum format)
         {
             MoverCardDataEqualityComparer Compare = new MoverCardDataEqualityComparer();
