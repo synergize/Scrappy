@@ -12,7 +12,6 @@ namespace MoversAndShakersScrapingService.Data_Models
             public string TotalPrice { get; set; }
             public string ChangePercentage { get; set; }
         }
-
         [JsonProperty("MoversAndShakersData")]
         public List<CardInfo> ListOfCards { get; set; }
     }

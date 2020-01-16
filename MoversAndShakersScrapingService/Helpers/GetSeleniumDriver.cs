@@ -13,7 +13,13 @@ namespace MoversAndShakersScrapingService.Helpers
         public IWebDriver CreateDriver(string url)
         {
             var option = new ChromeOptions();
-            option.AddArgument("--headless");
+            option.AddArguments(new List<string>()
+            {
+                "--headless",
+                "--silent-launch",
+                "no-sandbox",
+                "--no-startup-window"
+            });
             IWebDriver driver = new ChromeDriver(@"\\DESKTOP-JF26JGH\ChromeDriver", option);
             //driver.Manage().Window.Maximize();
             try
