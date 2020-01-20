@@ -3,11 +3,11 @@ using MoversAndShakersScrapingService.Element_Maps;
 using MoversAndShakersScrapingService.Enums;
 using MoversAndShakersScrapingService.File_Management;
 using MoversAndShakersScrapingService.Helpers;
+using MoversAndShakersScrapingService.Scrapers;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
-using static MoversAndShakersScrapingService.Scrapers.MoversAndShakersScraper;
 
 namespace MoversAndShakersScrapingService
 {
@@ -75,6 +75,7 @@ namespace MoversAndShakersScrapingService
                 {
                     Console.WriteLine($"{nameof(newDailyIncrease.ListOfCards)} and {nameof(oldDailyIncrease.ListOfCards)} Differ. Writing to disk...");
                     MoversShakersJSONController.WriteMoverShakersJsonByFileName(newDailyIncrease, $"{movertype.ToString()}_{format.ToString()}.json");
+                    break;
                 }
             }
                 
