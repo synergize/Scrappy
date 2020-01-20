@@ -68,10 +68,9 @@ namespace MoversAndShakersScrapingService.Scrapers
                         }
 
                     }
-
-                    //MoversShakersJSONController.WriteMoverShakersJsonByFileName(DailyList, $"{movertype.ToString()}_{format.ToString()}.json");
+                    
                     Console.WriteLine($"## Successfully created {movertype.ToString()}_{format.ToString()}.json ##");
-                    driver.Close();
+                    driver.Quit();
                     Console.WriteLine("Closing Driver...");
                     return DailyList;
 
@@ -79,8 +78,12 @@ namespace MoversAndShakersScrapingService.Scrapers
                 catch (Exception E)
                 {
                     Console.WriteLine(E);
-                    driver.Close();
+                    driver.Quit();
                     throw new Exception("Undefined exception occured. Selenium driver closed.");
+                }
+                finally
+                {
+                    driver.Quit();
                 }
             }
 
