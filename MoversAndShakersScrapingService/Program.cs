@@ -5,7 +5,6 @@ using MoversAndShakersScrapingService.File_Management;
 using MoversAndShakersScrapingService.Helpers;
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 using static MoversAndShakersScrapingService.Scrapers.MoversAndShakersScraper;
@@ -24,6 +23,7 @@ namespace MoversAndShakersScrapingService
         {
             aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
             aTimer.Start();
+            Console.WriteLine($"Scraping Service has started at {DateTime.Now.ToString("dd MMM HH:mm:ss")}");
 
             await Task.Delay(-1);
         }
