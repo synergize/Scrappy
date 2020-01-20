@@ -73,6 +73,7 @@ namespace MoversAndShakersScrapingService
         {
             MoverCardDataEqualityComparer Compare = new MoverCardDataEqualityComparer();
             newDailyIncrease.DateSaved = DateTime.Now;
+            newDailyIncrease.Format = format.ToString();
 
             if (oldDailyIncrease == null)
             {                
