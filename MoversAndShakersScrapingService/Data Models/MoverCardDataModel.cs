@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace MoversAndShakersScrapingService.Data_Models
@@ -15,5 +16,7 @@ namespace MoversAndShakersScrapingService.Data_Models
 
         [JsonProperty("MoversAndShakersData")]
         public List<CardInfo> ListOfCards { get; set; }
+        [JsonProperty("DateTimeFileSaved")]
+        public DateTime DateSaved { get; set; }
     }
 }

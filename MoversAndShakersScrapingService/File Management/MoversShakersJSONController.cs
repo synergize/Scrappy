@@ -10,6 +10,7 @@ namespace MoversAndShakersScrapingService.File_Management
 {
     class MoversShakersJSONController
     {
+        private const string fileLocation = @"\\DESKTOP-JF26JGH\MoversShakersScraped";
         //public static void SaveMoversChannelToJson(ulong channelID, ulong serverID)
         //{
         //    //string FilePath = FilePathingStaticData.BuildFilePath($"{serverID}.json");
@@ -85,10 +86,10 @@ namespace MoversAndShakersScrapingService.File_Management
         {
             FileSystemManager fileSystem = new FileSystemManager();
 
-            if (fileSystem.IsFileExists(fileName))
+            if (fileSystem.IsFileExists(fileName, fileLocation))
             {
-                var test = fileSystem.ReadJsonFile(fileName);
-                return JsonConvert.DeserializeObject<MoverCardDataModel>(fileSystem.ReadJsonFile(fileName));
+                var test = JsonConvert.DeserializeObject<MoverCardDataModel>(fileSystem.ReadJsonFileFromSpecificLocation(fileName, fileLocation));
+                return JsonConvert.DeserializeObject<MoverCardDataModel>(fileSystem.ReadJsonFileFromSpecificLocation(fileName, fileLocation));
             }
             else
             {
@@ -99,7 +100,7 @@ namespace MoversAndShakersScrapingService.File_Management
         public static void WriteMoverShakersJsonByFileName(object obj, string fileName)
         {
             FileSystemManager fileSystem = new FileSystemManager();
-            fileSystem.SaveJsonFile(obj, fileName);
+            fileSystem.SaveJsonFileToSpecificLocation(obj, fileLocation, fileName);
         }
     }
 }

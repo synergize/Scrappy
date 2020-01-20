@@ -69,7 +69,7 @@ namespace MoversAndShakersScrapingService.Scrapers
 
                     }
 
-                    MoversShakersJSONController.WriteMoverShakersJsonByFileName(DailyList, $"{movertype.ToString()}_{format.ToString()}.json");
+                    //MoversShakersJSONController.WriteMoverShakersJsonByFileName(DailyList, $"{movertype.ToString()}_{format.ToString()}.json");
                     Console.WriteLine($"## Successfully created {movertype.ToString()}_{format.ToString()}.json ##");
                     driver.Close();
                     Console.WriteLine("Closing Driver...");

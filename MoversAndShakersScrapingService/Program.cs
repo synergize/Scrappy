@@ -4,6 +4,7 @@ using MoversAndShakersScrapingService.Enums;
 using MoversAndShakersScrapingService.File_Management;
 using MoversAndShakersScrapingService.Helpers;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
@@ -21,10 +22,9 @@ namespace MoversAndShakersScrapingService
         static void Main(string[] args) => new Program().MainAsync().GetAwaiter().GetResult();
         private async Task MainAsync()
         {
-            //aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-            //aTimer.Start();
+            aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            aTimer.Start();
 
-            ScrapeMoversShakersJob();
             await Task.Delay(-1);
         }
 
@@ -35,7 +35,9 @@ namespace MoversAndShakersScrapingService
 
         private void ScrapeMoversShakersJob()
         {
-            Console.WriteLine("Starting Job..");
+            Console.WriteLine($"Starting Job at {DateTime.Now.ToString("dd MMM HH:mm:ss")}..");
+            var stopWatch = new Stopwatch();
+            stopWatch.Start();
             foreach (MTGFormatsEnum formatName in (MTGFormatsEnum[])Enum.GetValues(typeof(MTGFormatsEnum)))
             {
                 ScrapeMoversShakers Format = new ScrapeMoversShakers();                
@@ -55,7 +57,9 @@ namespace MoversAndShakersScrapingService
                 var oldWeeklyDecrease = MoversShakersJSONController.ReadMoversShakersJsonByName($"{MoversShakersTableEnum.WeeklyDecrease.ToString()}_{formatName.ToString()}.json");
                 DetermineNewData(newWeeklyDecrease, oldWeeklyDecrease, MoversShakersTableEnum.WeeklyDecrease, formatName);
             }
-            Console.WriteLine("Job Complete..");
+
+            stopWatch.Stop();
+            Console.WriteLine($"\n \n Job Complete at {DateTime.Now.ToString("dd MMM HH:mm:ss")} \n Elapsed Time: {stopWatch.Elapsed}");
         }
 
         /// <summary>
@@ -68,17 +72,23 @@ namespace MoversAndShakersScrapingService
         private void DetermineNewData(MoverCardDataModel newDailyIncrease, MoverCardDataModel oldDailyIncrease, MoversShakersTableEnum movertype, MTGFormatsEnum format)
         {
             MoverCardDataEqualityComparer Compare = new MoverCardDataEqualityComparer();
+            newDailyIncrease.DateSaved = DateTime.Now;
 
-            for (var i = 0; i < newDailyIncrease.ListOfCards.Count; i++)
-            {
-                if (!Compare.Equals(newDailyIncrease.ListOfCards[i], oldDailyIncrease.ListOfCards[i]))
-                {
-                    Console.WriteLine($"{nameof(newDailyIncrease.ListOfCards)} and {nameof(oldDailyIncrease.ListOfCards)} Differ. Writing to disk...");
-                    MoversShakersJSONController.WriteMoverShakersJsonByFileName(newDailyIncrease, $"{movertype.ToString()}_{format.ToString()}.json");
-                }
+            if (oldDailyIncrease == null)
+            {                
+                MoversShakersJSONController.WriteMoverShakersJsonByFileName(newDailyIncrease, $"{movertype.ToString()}_{format.ToString()}.json");
             }
-                
-            
+            else
+            {
+                for (var i = 0; i < newDailyIncrease.ListOfCards.Count; i++)
+                {
+                    if (!Compare.Equals(newDailyIncrease.ListOfCards[i], oldDailyIncrease.ListOfCards[i]))
+                    {
+                        Console.WriteLine($"{nameof(newDailyIncrease.ListOfCards)} and {nameof(oldDailyIncrease.ListOfCards)} Differ. Writing to disk...");                        
+                        MoversShakersJSONController.WriteMoverShakersJsonByFileName(newDailyIncrease, $"{movertype.ToString()}_{format.ToString()}.json");
+                    }
+                }
+            }             
         }
     }
 }
