@@ -59,6 +59,7 @@ namespace MoversAndShakersScrapingService
             }
 
             stopWatch.Stop();
+            Console.Clear();
             Console.WriteLine($"\n \n Job Complete at {DateTime.Now.ToString("dd MMM HH:mm:ss")} \n Elapsed Time: {stopWatch.Elapsed}");
         }
 
