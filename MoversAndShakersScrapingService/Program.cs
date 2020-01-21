@@ -58,6 +58,7 @@ namespace MoversAndShakersScrapingService
                 DetermineNewData(newWeeklyDecrease, oldWeeklyDecrease, MoversShakersTableEnum.WeeklyDecrease, formatName);
             }
 
+            MoversShakersJSONController.UpdateScrapeTime();
             stopWatch.Stop();
             Console.Clear();
             Console.WriteLine($"\n \n Job Complete at {DateTime.Now.ToString("dd MMM HH:mm:ss")} \n Elapsed Time: {stopWatch.Elapsed}");
@@ -73,7 +74,6 @@ namespace MoversAndShakersScrapingService
         private void DetermineNewData(MoverCardDataModel newDailyIncrease, MoverCardDataModel oldDailyIncrease, MoversShakersTableEnum movertype, MTGFormatsEnum format)
         {
             MoverCardDataEqualityComparer Compare = new MoverCardDataEqualityComparer();
-            newDailyIncrease.DateSaved = DateTime.Now;
             newDailyIncrease.Format = format.ToString();
 
             if (oldDailyIncrease == null)

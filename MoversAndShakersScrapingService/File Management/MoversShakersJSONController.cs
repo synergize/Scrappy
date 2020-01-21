@@ -102,6 +102,19 @@ namespace MoversAndShakersScrapingService.File_Management
             FileSystemManager fileSystem = new FileSystemManager();
             fileSystem.SaveJsonFileToSpecificLocation(obj, fileLocation, fileName);
         }
+
+        public static void UpdateScrapeTime()
+        {
+            var currentTime = DateTime.Now;
+            FileSystemManager fileSystem = new FileSystemManager();
+
+            var obj = new MoversAndShakersServerInfoDataModel
+            {
+                LastSuccessfulScrape = currentTime
+            };
+
+            fileSystem.SaveJsonFileToSpecificLocation(obj, fileLocation, $"SuccessfulScrapedTime.json");
+        }
     }
 }
 

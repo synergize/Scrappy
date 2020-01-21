@@ -16,8 +16,6 @@ namespace MoversAndShakersScrapingService.Data_Models
 
         [JsonProperty("MoversAndShakersData")]
         public List<CardInfo> ListOfCards { get; set; }
-        [JsonProperty("DateTimeFileSaved")]
-        public DateTime DateSaved { get; set; }
         [JsonProperty("FormatName")]
         public string Format { get; set; }
     }
