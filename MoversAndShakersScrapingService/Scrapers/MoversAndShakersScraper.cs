@@ -12,31 +12,17 @@ namespace MoversAndShakersScrapingService.Scrapers
     {
         public class ScrapeMoversShakers
         {
-            private GetSeleniumDriver BuildDriver;
             private IWebDriver driver;
-
-            public ScrapeMoversShakers()
-            {
-                try
-                {
-                    BuildDriver = new GetSeleniumDriver();                  
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    throw;
-                }
-            }
 
             public MoverCardDataModel GetListMoversShakesTable(MoversShakersTableEnum movertype, MTGFormatsEnum format, string elementXPath)
             {
                 try
-                {                       
+                {
                     var NewCard = new MoverCardDataModel.CardInfo();
                     var DailyList = new MoverCardDataModel();
                     DailyList.ListOfCards = new List<MoverCardDataModel.CardInfo>();
-                    
-                    driver = BuildDriver.CreateDriver($"https://www.mtggoldfish.com/movers/paper/{format.ToString()}");
+                    driver = GetSeleniumDriver.CreateDriver();
+                    driver.Navigate().GoToUrl($"https://www.mtggoldfish.com/movers/paper/{format.ToString()}");
                     var DailyChangeIncrease = driver.FindElements(By.XPath(elementXPath));
                     int elementCounter = 0;
                     int nameCounter = 0;
@@ -68,10 +54,9 @@ namespace MoversAndShakersScrapingService.Scrapers
                         }
 
                     }
-                    
+
                     Console.WriteLine($"## Successfully created {movertype.ToString()}_{format.ToString()}.json ##");
                     driver.Quit();
-                    Console.WriteLine("Closing Driver...");
                     return DailyList;
 
                 }

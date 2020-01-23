@@ -21,8 +21,9 @@ namespace MoversAndShakersScrapingService
         static void Main(string[] args) => new Program().MainAsync().GetAwaiter().GetResult();
         private async Task MainAsync()
         {
-            aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-            aTimer.Start();
+            //aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            //aTimer.Start();
+            ScrapeMoversShakersJob();
             Console.WriteLine($"Scraping Service has started at {DateTime.Now.ToString("dd MMM HH:mm:ss")}");
 
             await Task.Delay(-1);
@@ -77,20 +78,21 @@ namespace MoversAndShakersScrapingService
             newDailyIncrease.Format = format.ToString();
 
             if (oldDailyIncrease == null)
-            {                
+            {
                 MoversShakersJSONController.WriteMoverShakersJsonByFileName(newDailyIncrease, $"{movertype.ToString()}_{format.ToString()}.json");
             }
-            else
+            else if (newDailyIncrease.ListOfCards.Count != 0)
             {
                 for (var i = 0; i < newDailyIncrease.ListOfCards.Count; i++)
                 {
                     if (!Compare.Equals(newDailyIncrease.ListOfCards[i], oldDailyIncrease.ListOfCards[i]))
                     {
-                        Console.WriteLine($"{nameof(newDailyIncrease.ListOfCards)} and {nameof(oldDailyIncrease.ListOfCards)} Differ. Writing to disk...");                        
+                        Console.WriteLine($"{nameof(newDailyIncrease.ListOfCards)} and {nameof(oldDailyIncrease.ListOfCards)} Differ. Writing to disk...");
                         MoversShakersJSONController.WriteMoverShakersJsonByFileName(newDailyIncrease, $"{movertype.ToString()}_{format.ToString()}.json");
+                        break;
                     }
                 }
-            }             
+            }
         }
     }
 }
