@@ -4,6 +4,7 @@ using MoversAndShakersScrapingService.Enums;
 using MoversAndShakersScrapingService.File_Management;
 using MoversAndShakersScrapingService.Helpers;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Timers;
@@ -14,6 +15,7 @@ namespace MoversAndShakersScrapingService
     class Program
     {
         private Timer aTimer = new Timer();
+        private List<string> completedFormats = new List<string>();
         public Program()
         {
             aTimer.Interval = 2700000;
@@ -62,6 +64,14 @@ namespace MoversAndShakersScrapingService
             stopWatch.Stop();
             Console.Clear();
             Console.WriteLine($"\n \n Job Complete at {DateTime.Now.ToString("dd MMM HH:mm:ss")} \n Elapsed Time: {stopWatch.Elapsed}");
+            if (completedFormats.Count > 0)
+            {
+                Console.WriteLine("Formats Updated:");
+                foreach (var item in completedFormats)
+                {
+                    Console.WriteLine(item);
+                }
+            }
         }
 
         /// <summary>
@@ -71,32 +81,33 @@ namespace MoversAndShakersScrapingService
         /// <param name="oldDailyIncrease"></param>
         /// <param name="movertype"></param>
         /// <param name="format"></param>
-        private void DetermineNewData(MoverCardDataModel newDailyIncrease, MoverCardDataModel oldDailyIncrease, MoversShakersTableEnum movertype, MTGFormatsEnum format)
+        private void DetermineNewData(MoverCardDataModel newScrapedData, MoverCardDataModel oldScrapedData, MoversShakersTableEnum movertype, MTGFormatsEnum format)
         {
             MoverCardDataEqualityComparer Compare = new MoverCardDataEqualityComparer();
-            newDailyIncrease.Format = format.ToString();
+            newScrapedData.Format = format.ToString();
 
-            if (oldDailyIncrease == null)
+            if (oldScrapedData == null)
             {
-                MoversShakersJSONController.WriteMoverShakersJsonByFileName(newDailyIncrease, $"{movertype.ToString()}_{format.ToString()}.json");
+                MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{movertype.ToString()}_{format.ToString()}.json");
             }
-            if (newDailyIncrease.ListOfCards.Count != 0 && oldDailyIncrease.ListOfCards.Count != 0)
+            if (newScrapedData.ListOfCards.Count != 0 && oldScrapedData.ListOfCards.Count != 0)
             {
-                for (var i = 0; i < newDailyIncrease.ListOfCards.Count; i++)
+                for (var i = 0; i < newScrapedData.ListOfCards.Count; i++)
                 {
-                    if (!Compare.Equals(newDailyIncrease.ListOfCards[i], oldDailyIncrease.ListOfCards[i]))
-                    {
-                        Console.WriteLine($"{nameof(newDailyIncrease.ListOfCards)} and {nameof(oldDailyIncrease.ListOfCards)} Differ. Writing to disk...");
-                        MoversShakersJSONController.WriteMoverShakersJsonByFileName(newDailyIncrease, $"{movertype.ToString()}_{format.ToString()}.json");
+                    if (!Compare.Equals(newScrapedData.ListOfCards[i], oldScrapedData.ListOfCards[i]))
+                    {                        
+                        Console.WriteLine($"{nameof(newScrapedData.ListOfCards)} and {nameof(oldScrapedData.ListOfCards)} Differ. Writing to disk...");
+                        MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{movertype.ToString()}_{format.ToString()}.json");
+                        completedFormats.Add(newScrapedData.Format);
                         break;
                     }
                 }
             }
-            else if (newDailyIncrease.ListOfCards.Count > 0 && oldDailyIncrease.ListOfCards.Count == 0)
+            else if (newScrapedData.ListOfCards.Count > 0 && oldScrapedData.ListOfCards.Count == 0)
             {
-                for (var i = 0; i < newDailyIncrease.ListOfCards.Count; i++)
+                for (var i = 0; i < newScrapedData.ListOfCards.Count; i++)
                 {
-                    MoversShakersJSONController.WriteMoverShakersJsonByFileName(newDailyIncrease, $"{movertype.ToString()}_{format.ToString()}.json");
+                    MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{movertype.ToString()}_{format.ToString()}.json");
                     break;
                 }
             }
