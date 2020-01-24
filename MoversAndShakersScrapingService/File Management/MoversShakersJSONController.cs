@@ -9,11 +9,6 @@ namespace MoversAndShakersScrapingService.File_Management
     class MoversShakersJSONController
     {
         private static string fileLocation = ConfigurationManager.AppSettings.Get("MoversShakersScrapedDataDirectory");
-        private static DiscordServerChannelModel UpdateServerInfo(DiscordServerChannelModel obj, ulong channelID)
-        {
-            obj.channelID = channelID;
-            return obj;
-        }
 
         public static MoverCardDataModel ReadMoversShakersJsonByName(string fileName)
         {
