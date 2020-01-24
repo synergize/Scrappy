@@ -1,6 +1,5 @@
 ﻿using MoversAndShakersScrapingService.Data_Models;
 using MoversAndShakersScrapingService.Enums;
-using MoversAndShakersScrapingService.File_Management;
 using MoversAndShakersScrapingService.Helpers;
 using OpenQA.Selenium;
 using System;
@@ -13,7 +12,6 @@ namespace MoversAndShakersScrapingService.Scrapers
         public class ScrapeMoversShakers
         {
             private IWebDriver driver;
-
             public MoverCardDataModel GetListMoversShakesTable(MoversShakersTableEnum movertype, MTGFormatsEnum format, string elementXPath)
             {
                 try
@@ -21,7 +19,7 @@ namespace MoversAndShakersScrapingService.Scrapers
                     var NewCard = new MoverCardDataModel.CardInfo();
                     var DailyList = new MoverCardDataModel();
                     DailyList.ListOfCards = new List<MoverCardDataModel.CardInfo>();
-                    driver = GetSeleniumDriver.CreateDriver();
+                    driver = new GetSeleniumDriver().CreateDriver(driver);                   
                     driver.Navigate().GoToUrl($"https://www.mtggoldfish.com/movers/paper/{format.ToString()}");
                     var DailyChangeIncrease = driver.FindElements(By.XPath(elementXPath));
                     int elementCounter = 0;
@@ -65,10 +63,6 @@ namespace MoversAndShakersScrapingService.Scrapers
                     Console.WriteLine(E);
                     driver.Quit();
                     throw new Exception("Undefined exception occured. Selenium driver closed.");
-                }
-                finally
-                {
-                    driver.Quit();
                 }
             }
 

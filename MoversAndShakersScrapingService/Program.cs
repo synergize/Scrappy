@@ -21,9 +21,8 @@ namespace MoversAndShakersScrapingService
         static void Main(string[] args) => new Program().MainAsync().GetAwaiter().GetResult();
         private async Task MainAsync()
         {
-            //aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-            //aTimer.Start();
-            ScrapeMoversShakersJob();
+            aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            aTimer.Start();
             Console.WriteLine($"Scraping Service has started at {DateTime.Now.ToString("dd MMM HH:mm:ss")}");
 
             await Task.Delay(-1);
@@ -41,7 +40,7 @@ namespace MoversAndShakersScrapingService
             stopWatch.Start();
             foreach (MTGFormatsEnum formatName in (MTGFormatsEnum[])Enum.GetValues(typeof(MTGFormatsEnum)))
             {
-                ScrapeMoversShakers Format = new ScrapeMoversShakers();                
+                ScrapeMoversShakers Format = new ScrapeMoversShakers();
                 var newDailyIncrease = Format.GetListMoversShakesTable(MoversShakersTableEnum.DailyIncrease, formatName, MoversShakersMappings.DailyIncreaseXpath);
                 var oldDailyIncrease = MoversShakersJSONController.ReadMoversShakersJsonByName($"{MoversShakersTableEnum.DailyIncrease.ToString()}_{formatName.ToString()}.json");
                 DetermineNewData(newDailyIncrease, oldDailyIncrease, MoversShakersTableEnum.DailyIncrease, formatName);
@@ -81,7 +80,7 @@ namespace MoversAndShakersScrapingService
             {
                 MoversShakersJSONController.WriteMoverShakersJsonByFileName(newDailyIncrease, $"{movertype.ToString()}_{format.ToString()}.json");
             }
-            else if (newDailyIncrease.ListOfCards.Count != 0)
+            if (newDailyIncrease.ListOfCards.Count != 0 && oldDailyIncrease.ListOfCards.Count != 0)
             {
                 for (var i = 0; i < newDailyIncrease.ListOfCards.Count; i++)
                 {
@@ -91,6 +90,14 @@ namespace MoversAndShakersScrapingService
                         MoversShakersJSONController.WriteMoverShakersJsonByFileName(newDailyIncrease, $"{movertype.ToString()}_{format.ToString()}.json");
                         break;
                     }
+                }
+            }
+            else if (newDailyIncrease.ListOfCards.Count > 0 && oldDailyIncrease.ListOfCards.Count == 0)
+            {
+                for (var i = 0; i < newDailyIncrease.ListOfCards.Count; i++)
+                {
+                    MoversShakersJSONController.WriteMoverShakersJsonByFileName(newDailyIncrease, $"{movertype.ToString()}_{format.ToString()}.json");
+                    break;
                 }
             }
         }

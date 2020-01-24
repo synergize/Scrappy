@@ -1,13 +1,19 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System.Collections.Generic;
+using System.Configuration;
 
 namespace MoversAndShakersScrapingService.Helpers
 {
-    public static class GetSeleniumDriver
+    public class GetSeleniumDriver
     {       
-        public static IWebDriver CreateDriver()
-        {
+        public IWebDriver CreateDriver(IWebDriver webDriver)
+        {            
+            if (webDriver != null)
+            {
+                webDriver.Quit();
+            }
+
             var options = new ChromeOptions();
             options.AddArguments(new List<string>()
             {
@@ -16,9 +22,9 @@ namespace MoversAndShakersScrapingService.Helpers
                 "no-sandbox",
                 "--no-startup-window"
             });
-            IWebDriver driver = new ChromeDriver(@"\\DESKTOP-JF26JGH\ChromeDriver", options);
 
-            return driver;
+            webDriver = new ChromeDriver(ConfigurationManager.AppSettings.Get("ChromeDriverLocation"), options);
+            return webDriver;
         }
     }
 }
