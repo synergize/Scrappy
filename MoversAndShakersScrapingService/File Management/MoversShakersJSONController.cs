@@ -1,7 +1,9 @@
 ﻿using MoversAndShakersScrapingService.Data_Models;
+using MoversAndShakersScrapingService.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Configuration;
+using System.Reflection;
 using VTFileSystemManagement;
 
 namespace MoversAndShakersScrapingService.File_Management
@@ -28,6 +30,11 @@ namespace MoversAndShakersScrapingService.File_Management
         {
             FileSystemManager fileSystem = new FileSystemManager();
             fileSystem.SaveJsonFileToSpecificLocation(obj, fileLocation, fileName);
+
+            Type t = obj.GetType();
+            PropertyInfo prop = t.GetProperty("Format");
+            object format = prop.GetValue(obj);
+            Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime($"## Successfully acquired {format}##"));
         }
 
         public static void UpdateScrapeTime()
@@ -41,6 +48,7 @@ namespace MoversAndShakersScrapingService.File_Management
             };
 
             fileSystem.SaveJsonFileToSpecificLocation(obj, fileLocation, $"SuccessfulScrapedTime.json");
+            Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime($"Scrape time updated to {DateTime.Now.ToString("dd MMM HH:mm:ss")}"));
         }
     }
 }

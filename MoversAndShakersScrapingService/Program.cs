@@ -23,8 +23,11 @@ namespace MoversAndShakersScrapingService
         static void Main(string[] args) => new Program().MainAsync().GetAwaiter().GetResult();
         private async Task MainAsync()
         {
+            aTimer.BeginInit();
             aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            aTimer.EndInit();
             aTimer.Start();
+            ScrapeMoversShakersJob();
             Console.WriteLine($"Scraping Service has started at {DateTime.Now.ToString("dd MMM HH:mm:ss")}");
 
             await Task.Delay(-1);
@@ -59,10 +62,10 @@ namespace MoversAndShakersScrapingService
                 var oldWeeklyDecrease = MoversShakersJSONController.ReadMoversShakersJsonByName($"{MoversShakersTableEnum.WeeklyDecrease.ToString()}_{formatName.ToString()}.json");
                 DetermineNewData(newWeeklyDecrease, oldWeeklyDecrease, MoversShakersTableEnum.WeeklyDecrease, formatName);
             }
-
-            MoversShakersJSONController.UpdateScrapeTime();
-            stopWatch.Stop();
             Console.Clear();
+            MoversShakersJSONController.UpdateScrapeTime();
+            stopWatch.Stop();            
+            aTimer.Dispose();
             Console.WriteLine($"\n \n Job Complete at {DateTime.Now.ToString("dd MMM HH:mm:ss")} \n Elapsed Time: {stopWatch.Elapsed}");
             if (completedFormats.Count > 0)
             {
@@ -71,6 +74,7 @@ namespace MoversAndShakersScrapingService
                 {
                     Console.WriteLine(item);
                 }
+                completedFormats = new List<string>();
             }
         }
 
