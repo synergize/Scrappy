@@ -15,8 +15,8 @@ namespace MoversAndShakersScrapingService.Scrapers
             private IWebDriver driver;
             public MoverCardDataModel GetListMoversShakesTable(MoversShakersTableEnum movertype, MTGFormatsEnum format, string elementXPath)
             {
-                Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime("Waiting 15 seconds before we begin..."));
-                Thread.Sleep(15000);                
+                Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime("Waiting 5 seconds before we begin..."));
+                Thread.Sleep(5000);                
                 try
                 {
                     var NewCard = new MoverCardDataModel.CardInfo();

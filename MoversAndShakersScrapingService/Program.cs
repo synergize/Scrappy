@@ -23,11 +23,9 @@ namespace MoversAndShakersScrapingService
         static void Main(string[] args) => new Program().MainAsync().GetAwaiter().GetResult();
         private async Task MainAsync()
         {
-            aTimer.BeginInit();
-            aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-            aTimer.EndInit();
-            aTimer.Start();
             ScrapeMoversShakersJob();
+            aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            aTimer.Start();
             Console.WriteLine($"Scraping Service has started at {DateTime.Now.ToString("dd MMM HH:mm:ss")}");
 
             await Task.Delay(-1);
@@ -35,7 +33,15 @@ namespace MoversAndShakersScrapingService
 
         private void OnTimedEvent(object source, ElapsedEventArgs e)
         {
-            ScrapeMoversShakersJob();
+            try
+            {
+                ScrapeMoversShakersJob();
+            }
+            catch (Exception z)
+            {
+                Console.WriteLine(z);
+                throw new Exception(z.Message);
+            }
         }
 
         private void ScrapeMoversShakersJob()
@@ -62,13 +68,12 @@ namespace MoversAndShakersScrapingService
                 var oldWeeklyDecrease = MoversShakersJSONController.ReadMoversShakersJsonByName($"{MoversShakersTableEnum.WeeklyDecrease.ToString()}_{formatName.ToString()}.json");
                 DetermineNewData(newWeeklyDecrease, oldWeeklyDecrease, MoversShakersTableEnum.WeeklyDecrease, formatName);
             }
-            Console.Clear();
-            MoversShakersJSONController.UpdateScrapeTime();
+            Console.Clear();            
             stopWatch.Stop();            
-            aTimer.Dispose();
             Console.WriteLine($"\n \n Job Complete at {DateTime.Now.ToString("dd MMM HH:mm:ss")} \n Elapsed Time: {stopWatch.Elapsed}");
             if (completedFormats.Count > 0)
             {
+                MoversShakersJSONController.UpdateScrapeTime();
                 Console.WriteLine("Formats Updated:");
                 foreach (var item in completedFormats)
                 {
