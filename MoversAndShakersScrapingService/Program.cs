@@ -107,7 +107,7 @@ namespace MoversAndShakersScrapingService
                     {                        
                         Console.WriteLine($"{nameof(newScrapedData.ListOfCards)} and {nameof(oldScrapedData.ListOfCards)} Differ. Writing to disk...");
                         MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{movertype.ToString()}_{format.ToString()}.json");
-                        completedFormats.Add(newScrapedData.Format);
+                        completedFormats.Add($"{newScrapedData.Format}_{movertype.ToString()}");
                         break;
                     }
                 }
