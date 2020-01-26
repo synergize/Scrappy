@@ -13,8 +13,14 @@ namespace MoversAndShakersScrapingService.Data_Models
             public string ChangePercentage { get; set; }
         }
 
-        [JsonProperty("MoversAndShakersData")]
-        public List<CardInfo> ListOfCards { get; set; }
+        [JsonProperty("DailyIncreaseData")]
+        public List<CardInfo> DailyIncreaseList { get; set; }
+        [JsonProperty("DailyDecreaseData")]
+        public List<CardInfo> DailyDecreaseList { get; set; }
+        [JsonProperty("WeeklyIncreaseData")]
+        public List<CardInfo> WeeklyIncreaseList { get; set; }
+        [JsonProperty("WeeklyDecreaseData")]
+        public List<CardInfo> WeeklyDecreaseList { get; set; }
         [JsonProperty("FormatName")]
         public string Format { get; set; }
     }

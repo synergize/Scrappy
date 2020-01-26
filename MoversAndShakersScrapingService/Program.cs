@@ -52,24 +52,12 @@ namespace MoversAndShakersScrapingService
             foreach (MTGFormatsEnum formatName in (MTGFormatsEnum[])Enum.GetValues(typeof(MTGFormatsEnum)))
             {
                 ScrapeMoversShakers Format = new ScrapeMoversShakers();
-                var newDailyIncrease = Format.GetListMoversShakesTable(MoversShakersTableEnum.DailyIncrease, formatName, MoversShakersMappings.DailyIncreaseXpath);
-                var oldDailyIncrease = MoversShakersJSONController.ReadMoversShakersJsonByName($"{MoversShakersTableEnum.DailyIncrease.ToString()}_{formatName.ToString()}.json");
-                DetermineNewData(newDailyIncrease, oldDailyIncrease, MoversShakersTableEnum.DailyIncrease, formatName);
-
-                var newDailyDecrease = Format.GetListMoversShakesTable(MoversShakersTableEnum.DailyDecrease, formatName, MoversShakersMappings.DailyDecreaseXpath);
-                var oldDailyDecrease = MoversShakersJSONController.ReadMoversShakersJsonByName($"{MoversShakersTableEnum.DailyDecrease.ToString()}_{formatName.ToString()}.json");
-                DetermineNewData(newDailyDecrease, oldDailyDecrease, MoversShakersTableEnum.DailyDecrease, formatName);
-
-                var newWeeklyIncrease = Format.GetListMoversShakesTable(MoversShakersTableEnum.WeeklyIncrease, formatName, MoversShakersMappings.WeeklyIncreaseXpath);
-                var oldWeeklyIncrease = MoversShakersJSONController.ReadMoversShakersJsonByName($"{MoversShakersTableEnum.WeeklyIncrease.ToString()}_{formatName.ToString()}.json");
-                DetermineNewData(newWeeklyIncrease, oldWeeklyIncrease, MoversShakersTableEnum.WeeklyIncrease, formatName);
-
-                var newWeeklyDecrease = Format.GetListMoversShakesTable(MoversShakersTableEnum.WeeklyDecrease, formatName, MoversShakersMappings.WeeklyDecreaseXpath);
-                var oldWeeklyDecrease = MoversShakersJSONController.ReadMoversShakersJsonByName($"{MoversShakersTableEnum.WeeklyDecrease.ToString()}_{formatName.ToString()}.json");
-                DetermineNewData(newWeeklyDecrease, oldWeeklyDecrease, MoversShakersTableEnum.WeeklyDecrease, formatName);
+                var newScrapedData = Format.GetSrapedMoversShakersData(formatName);
+                var oldScrapedData = MoversShakersJSONController.ReadMoversShakersJsonByName($"{formatName.ToString()}.json");
+                DetermineNewData(newScrapedData, oldScrapedData, formatName);            
             }
-            Console.Clear();            
-            stopWatch.Stop();            
+            Console.Clear();
+            stopWatch.Stop();
             Console.WriteLine($"\n \n Job Complete at {DateTime.Now.ToString("dd MMM HH:mm:ss")} \n Elapsed Time: {stopWatch.Elapsed}");
             if (completedFormats.Count > 0)
             {
@@ -90,33 +78,34 @@ namespace MoversAndShakersScrapingService
         /// <param name="oldDailyIncrease"></param>
         /// <param name="movertype"></param>
         /// <param name="format"></param>
-        private void DetermineNewData(MoverCardDataModel newScrapedData, MoverCardDataModel oldScrapedData, MoversShakersTableEnum movertype, MTGFormatsEnum format)
+        private void DetermineNewData(MoverCardDataModel newScrapedData, MoverCardDataModel oldScrapedData, MTGFormatsEnum format)
         {
             MoverCardDataEqualityComparer Compare = new MoverCardDataEqualityComparer();
             newScrapedData.Format = format.ToString();
 
             if (oldScrapedData == null)
             {
-                MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{movertype.ToString()}_{format.ToString()}.json");
+                MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{format.ToString()}.json");
+                Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime($"Successfully created {format.ToString()}.json"));
             }
-            if (newScrapedData.ListOfCards.Count != 0 && oldScrapedData.ListOfCards.Count != 0)
+            if (newScrapedData.DailyIncreaseList.Count != 0 && oldScrapedData.DailyIncreaseList.Count != 0)
             {
-                for (var i = 0; i < newScrapedData.ListOfCards.Count; i++)
+                for (var i = 0; i < newScrapedData.DailyIncreaseList.Count; i++)
                 {
-                    if (!Compare.Equals(newScrapedData.ListOfCards[i], oldScrapedData.ListOfCards[i]))
-                    {                        
-                        Console.WriteLine($"{nameof(newScrapedData.ListOfCards)} and {nameof(oldScrapedData.ListOfCards)} Differ. Writing to disk...");
-                        MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{movertype.ToString()}_{format.ToString()}.json");
-                        completedFormats.Add($"{newScrapedData.Format}_{movertype.ToString()}");
+                    if (!Compare.Equals(newScrapedData.DailyIncreaseList[i], oldScrapedData.DailyIncreaseList[i]))
+                    {
+                        Console.WriteLine($"New: {newScrapedData.Format} and Old: {oldScrapedData.Format} Differ. Writing to disk...");
+                        MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{format.ToString()}.json");
+                        completedFormats.Add($"{newScrapedData.Format}");
                         break;
                     }
                 }
             }
-            else if (newScrapedData.ListOfCards.Count > 0 && oldScrapedData.ListOfCards.Count == 0)
+            else if (newScrapedData.DailyIncreaseList.Count > 0 && oldScrapedData.DailyIncreaseList.Count == 0)
             {
-                for (var i = 0; i < newScrapedData.ListOfCards.Count; i++)
+                for (int i = 0; i < newScrapedData.DailyIncreaseList.Count; i++)
                 {
-                    MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{movertype.ToString()}_{format.ToString()}.json");
+                    MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{format.ToString()}.json");
                     break;
                 }
             }

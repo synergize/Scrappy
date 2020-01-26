@@ -30,11 +30,6 @@ namespace MoversAndShakersScrapingService.File_Management
         {
             FileSystemManager fileSystem = new FileSystemManager();
             fileSystem.SaveJsonFileToSpecificLocation(obj, fileLocation, fileName);
-
-            Type t = obj.GetType();
-            PropertyInfo prop = t.GetProperty("Format");
-            object format = prop.GetValue(obj);
-            Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime($"## Successfully acquired {format}##"));
         }
 
         public static void UpdateScrapeTime()
