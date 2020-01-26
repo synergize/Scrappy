@@ -93,7 +93,6 @@ namespace MoversAndShakersScrapingService.Scrapers
                     }
                 }
                 return NameArry;
-
             }
 
             private string[] GetDailyDecreaseNames()
@@ -112,7 +111,6 @@ namespace MoversAndShakersScrapingService.Scrapers
                         driver.Quit();
                         return new string[10];
                     }
-
                 }
                 return NameArry;
             }
