@@ -104,7 +104,7 @@ namespace MoversAndShakersScrapingService.Scrapers
 
                 for (int i = 0; i < NameArry.Length; i++)
                 {
-                    var Name = driver.FindElement(By.XPath($"/html/body/main/div[6]/div[1]/div/div/div[1]/table/tbody/tr[{i + 1}]/td[4]/a"));
+                    var Name = driver.FindElement(By.XPath($"/html/body/main/div[6]/div[1]/div/div/div[2]/table/tbody/tr[{i + 1}]/td[4]/a"));
                     NameArry[i] = Name.Text;
                 }
                 return NameArry;
@@ -116,7 +116,7 @@ namespace MoversAndShakersScrapingService.Scrapers
 
                 for (int i = 0; i < NameArry.Length; i++)
                 {
-                    var Name = driver.FindElement(By.XPath($"/html/body/main/div[6]/div[1]/div/div/div[1]/table/tbody/tr[{i + 1}]/td[4]/a"));
+                    var Name = driver.FindElement(By.XPath($"/html/body/main/div[7]/div[1]/div/div/div[1]/table/tbody/tr[{i + 1}]/td[4]/a"));
                     NameArry[i] = Name.Text;
                 }
                 return NameArry;
@@ -128,7 +128,7 @@ namespace MoversAndShakersScrapingService.Scrapers
 
                 for (int i = 0; i < NameArry.Length; i++)
                 {
-                    var Name = driver.FindElement(By.XPath($"/html/body/main/div[6]/div[1]/div/div/div[1]/table/tbody/tr[{i + 1}]/td[4]/a"));
+                    var Name = driver.FindElement(By.XPath($"/html/body/main/div[7]/div[1]/div/div/div[2]/table/tbody/tr[{i + 1}]/td[4]/a"));
                     NameArry[i] = Name.Text;
                 }
                 return NameArry;
