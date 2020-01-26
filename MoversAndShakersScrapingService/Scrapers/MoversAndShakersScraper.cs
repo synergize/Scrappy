@@ -21,7 +21,7 @@ namespace MoversAndShakersScrapingService.Scrapers
                 {
                     var NewCard = new MoverCardDataModel.CardInfo();
                     var DailyList = new MoverCardDataModel();
-                    DailyList.ListOfCards = new List<MoverCardDataModel.CardInfo>();
+                    DailyList. = new List<MoverCardDataModel.CardInfo>();
                     driver = new GetSeleniumDriver().CreateDriver(driver);                   
                     driver.Navigate().GoToUrl($"https://www.mtggoldfish.com/movers/paper/{format.ToString()}");
                     var DailyChangeIncrease = driver.FindElements(By.XPath(elementXPath));
@@ -65,6 +65,24 @@ namespace MoversAndShakersScrapingService.Scrapers
                     Console.WriteLine(E);
                     driver.Quit();
                     throw new Exception("Undefined exception occured. Selenium driver closed.");
+                }
+            }
+
+            private List<MoverCardDataModel.CardInfo> GetListType(MoversShakersTableEnum moverType)
+            {
+                var list = new MoverCardDataModel();
+                switch (moverType)
+                {
+                    case MoversShakersTableEnum.DailyIncrease:
+                        return list.DailyIncreaseList = new List<MoverCardDataModel.CardInfo>();
+                    case MoversShakersTableEnum.DailyDecrease:
+                        return list.DailyDecreaseList = new List<MoverCardDataModel.CardInfo>();
+                    case MoversShakersTableEnum.WeeklyIncrease:
+                        return list.WeeklyIncreaseList = new List<MoverCardDataModel.CardInfo>();
+                    case MoversShakersTableEnum.WeeklyDecrease:
+                        return list.WeeklyDecreaseList = new List<MoverCardDataModel.CardInfo>();
+                    default:
+                        return null;
                 }
             }
 
