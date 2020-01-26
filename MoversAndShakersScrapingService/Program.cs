@@ -1,5 +1,4 @@
 ﻿using MoversAndShakersScrapingService.Data_Models;
-using MoversAndShakersScrapingService.Element_Maps;
 using MoversAndShakersScrapingService.Enums;
 using MoversAndShakersScrapingService.File_Management;
 using MoversAndShakersScrapingService.Helpers;
@@ -26,7 +25,7 @@ namespace MoversAndShakersScrapingService
             ScrapeMoversShakersJob();
             aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
             aTimer.Start();
-            Console.WriteLine($"Scraping Service has started at {DateTime.Now.ToString("dd MMM HH:mm:ss")}");
+            Console.WriteLine($"\n Scraping service timer has started at {DateTime.Now.ToString("dd MMM HH:mm:ss")}");
 
             await Task.Delay(-1);
         }
@@ -51,10 +50,9 @@ namespace MoversAndShakersScrapingService
             stopWatch.Start();
             foreach (MTGFormatsEnum formatName in (MTGFormatsEnum[])Enum.GetValues(typeof(MTGFormatsEnum)))
             {
-                ScrapeMoversShakers Format = new ScrapeMoversShakers();
-                var newScrapedData = Format.GetSrapedMoversShakersData(formatName);
+                var newScrapedData = new ScrapeMoversShakers().GetSrapedMoversShakersData(formatName).GetAwaiter().GetResult();
                 var oldScrapedData = MoversShakersJSONController.ReadMoversShakersJsonByName($"{formatName.ToString()}.json");
-                DetermineNewData(newScrapedData, oldScrapedData, formatName);            
+                DetermineNewData(newScrapedData, oldScrapedData, formatName);
             }
             Console.Clear();
             stopWatch.Stop();
@@ -62,9 +60,10 @@ namespace MoversAndShakersScrapingService
             if (completedFormats.Count > 0)
             {
                 MoversShakersJSONController.UpdateScrapeTime();
-                Console.WriteLine("Formats Updated:");
+                Console.WriteLine($"\n Formats Updated: \n");
                 foreach (var item in completedFormats)
                 {
+                    Console.WriteLine("\n");
                     Console.WriteLine(item);
                 }
                 completedFormats = new List<string>();

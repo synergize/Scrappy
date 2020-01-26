@@ -6,6 +6,7 @@ using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MoversAndShakersScrapingService.Scrapers
 {
@@ -14,8 +15,7 @@ namespace MoversAndShakersScrapingService.Scrapers
         public class ScrapeMoversShakers
         {
             private IWebDriver driver;
-
-            public MoverCardDataModel GetSrapedMoversShakersData(MTGFormatsEnum format)
+            public async Task<MoverCardDataModel> GetSrapedMoversShakersData(MTGFormatsEnum format)
             {
                 Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime($"[Scraping {format.ToString()}]: Waiting 5 seconds before we begin..."));
                 Thread.Sleep(5000);
