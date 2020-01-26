@@ -52,21 +52,27 @@ namespace MoversAndShakersScrapingService
             foreach (MTGFormatsEnum formatName in (MTGFormatsEnum[])Enum.GetValues(typeof(MTGFormatsEnum)))
             {
                 ScrapeMoversShakers Format = new ScrapeMoversShakers();
-                var newDailyIncrease = Format.GetListMoversShakesTable(MoversShakersTableEnum.DailyIncrease, formatName, MoversShakersMappings.DailyIncreaseXpath);
-                var oldDailyIncrease = MoversShakersJSONController.ReadMoversShakersJsonByName($"{MoversShakersTableEnum.DailyIncrease.ToString()}_{formatName.ToString()}.json");
-                DetermineNewData(newDailyIncrease, oldDailyIncrease, MoversShakersTableEnum.DailyIncrease, formatName);
+                var test = Format.GetSrapedMoversShakersData(formatName);
+                var x = 0;
+                //var newDailyIncrease = Format.GetListMoversShakesTable(MoversShakersTableEnum.DailyIncrease, formatName, MoversShakersMappings.DailyIncreaseXpath);
+                //var oldDailyIncrease = MoversShakersJSONController.ReadMoversShakersJsonByName($"{MoversShakersTableEnum.DailyIncrease.ToString()}_{formatName.ToString()}.json");
+                //DetermineNewData(newDailyIncrease, oldDailyIncrease, MoversShakersTableEnum.DailyIncrease, formatName);
 
-                var newDailyDecrease = Format.GetListMoversShakesTable(MoversShakersTableEnum.DailyDecrease, formatName, MoversShakersMappings.DailyDecreaseXpath);
-                var oldDailyDecrease = MoversShakersJSONController.ReadMoversShakersJsonByName($"{MoversShakersTableEnum.DailyDecrease.ToString()}_{formatName.ToString()}.json");
-                DetermineNewData(newDailyDecrease, oldDailyDecrease, MoversShakersTableEnum.DailyDecrease, formatName);
+                //var newDailyDecrease = Format.GetListMoversShakesTable(MoversShakersTableEnum.DailyDecrease, formatName, MoversShakersMappings.DailyDecreaseXpath);
+                //var oldDailyDecrease = MoversShakersJSONController.ReadMoversShakersJsonByName($"{MoversShakersTableEnum.DailyDecrease.ToString()}_{formatName.ToString()}.json");
+                //DetermineNewData(newDailyDecrease, oldDailyDecrease, MoversShakersTableEnum.DailyDecrease, formatName);
 
-                var newWeeklyIncrease = Format.GetListMoversShakesTable(MoversShakersTableEnum.WeeklyIncrease, formatName, MoversShakersMappings.WeeklyIncreaseXpath);
-                var oldWeeklyIncrease = MoversShakersJSONController.ReadMoversShakersJsonByName($"{MoversShakersTableEnum.WeeklyIncrease.ToString()}_{formatName.ToString()}.json");
-                DetermineNewData(newWeeklyIncrease, oldWeeklyIncrease, MoversShakersTableEnum.WeeklyIncrease, formatName);
+                //var newWeeklyIncrease = Format.GetListMoversShakesTable(MoversShakersTableEnum.WeeklyIncrease, formatName, MoversShakersMappings.WeeklyIncreaseXpath);
+                //var oldWeeklyIncrease = MoversShakersJSONController.ReadMoversShakersJsonByName($"{MoversShakersTableEnum.WeeklyIncrease.ToString()}_{formatName.ToString()}.json");
+                //DetermineNewData(newWeeklyIncrease, oldWeeklyIncrease, MoversShakersTableEnum.WeeklyIncrease, formatName);
 
-                var newWeeklyDecrease = Format.GetListMoversShakesTable(MoversShakersTableEnum.WeeklyDecrease, formatName, MoversShakersMappings.WeeklyDecreaseXpath);
-                var oldWeeklyDecrease = MoversShakersJSONController.ReadMoversShakersJsonByName($"{MoversShakersTableEnum.WeeklyDecrease.ToString()}_{formatName.ToString()}.json");
-                DetermineNewData(newWeeklyDecrease, oldWeeklyDecrease, MoversShakersTableEnum.WeeklyDecrease, formatName);
+                //var newWeeklyDecrease = Format.GetListMoversShakesTable(MoversShakersTableEnum.WeeklyDecrease, formatName, MoversShakersMappings.WeeklyDecreaseXpath);
+                //var oldWeeklyDecrease = MoversShakersJSONController.ReadMoversShakersJsonByName($"{MoversShakersTableEnum.WeeklyDecrease.ToString()}_{formatName.ToString()}.json");
+                //DetermineNewData(newWeeklyDecrease, oldWeeklyDecrease, MoversShakersTableEnum.WeeklyDecrease, formatName);
+
+                
+
+
             }
             Console.Clear();            
             stopWatch.Stop();            
@@ -90,35 +96,52 @@ namespace MoversAndShakersScrapingService
         /// <param name="oldDailyIncrease"></param>
         /// <param name="movertype"></param>
         /// <param name="format"></param>
-        private void DetermineNewData(MoverCardDataModel newScrapedData, MoverCardDataModel oldScrapedData, MoversShakersTableEnum movertype, MTGFormatsEnum format)
-        {
-            MoverCardDataEqualityComparer Compare = new MoverCardDataEqualityComparer();
-            newScrapedData.Format = format.ToString();
+        //private void DetermineNewData(MoverCardDataModel newScrapedData, MoverCardDataModel oldScrapedData, MoversShakersTableEnum movertype, MTGFormatsEnum format)
+        //{
+        //    MoverCardDataEqualityComparer Compare = new MoverCardDataEqualityComparer();
+        //    newScrapedData.Format = format.ToString();
 
-            if (oldScrapedData == null)
+        //    if (oldScrapedData == null)
+        //    {
+        //        MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{movertype.ToString()}_{format.ToString()}.json");
+        //    }
+        //    if (newScrapedData.ListOfCards.Count != 0 && oldScrapedData.ListOfCards.Count != 0)
+        //    {
+        //        for (var i = 0; i < newScrapedData.ListOfCards.Count; i++)
+        //        {
+        //            if (!Compare.Equals(newScrapedData.ListOfCards[i], oldScrapedData.ListOfCards[i]))
+        //            {                        
+        //                Console.WriteLine($"{nameof(newScrapedData.ListOfCards)} and {nameof(oldScrapedData.ListOfCards)} Differ. Writing to disk...");
+        //                MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{movertype.ToString()}_{format.ToString()}.json");
+        //                completedFormats.Add(newScrapedData.Format);
+        //                break;
+        //            }
+        //        }
+        //    }
+        //    else if (newScrapedData.ListOfCards.Count > 0 && oldScrapedData.ListOfCards.Count == 0)
+        //    {
+        //        for (var i = 0; i < newScrapedData.ListOfCards.Count; i++)
+        //        {
+        //            MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{movertype.ToString()}_{format.ToString()}.json");
+        //            break;
+        //        }
+        //    }
+        //}
+
+        private void DetermineListOfCards(MoverCardDataModel newScrapedData, MoverCardDataModel oldScrapedData, MoversShakersTableEnum movertype)
+        {
+            switch (movertype)
             {
-                MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{movertype.ToString()}_{format.ToString()}.json");
-            }
-            if (newScrapedData.ListOfCards.Count != 0 && oldScrapedData.ListOfCards.Count != 0)
-            {
-                for (var i = 0; i < newScrapedData.ListOfCards.Count; i++)
-                {
-                    if (!Compare.Equals(newScrapedData.ListOfCards[i], oldScrapedData.ListOfCards[i]))
-                    {                        
-                        Console.WriteLine($"{nameof(newScrapedData.ListOfCards)} and {nameof(oldScrapedData.ListOfCards)} Differ. Writing to disk...");
-                        MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{movertype.ToString()}_{format.ToString()}.json");
-                        completedFormats.Add(newScrapedData.Format);
-                        break;
-                    }
-                }
-            }
-            else if (newScrapedData.ListOfCards.Count > 0 && oldScrapedData.ListOfCards.Count == 0)
-            {
-                for (var i = 0; i < newScrapedData.ListOfCards.Count; i++)
-                {
-                    MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{movertype.ToString()}_{format.ToString()}.json");
+                case MoversShakersTableEnum.DailyIncrease:
                     break;
-                }
+                case MoversShakersTableEnum.DailyDecrease:
+                    break;
+                case MoversShakersTableEnum.WeeklyIncrease:
+                    break;
+                case MoversShakersTableEnum.WeeklyDecrease:
+                    break;
+                default:
+                    break;
             }
         }
     }

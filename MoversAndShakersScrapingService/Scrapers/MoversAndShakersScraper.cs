@@ -1,4 +1,5 @@
 ﻿using MoversAndShakersScrapingService.Data_Models;
+using MoversAndShakersScrapingService.Element_Maps;
 using MoversAndShakersScrapingService.Enums;
 using MoversAndShakersScrapingService.Helpers;
 using OpenQA.Selenium;
@@ -13,60 +14,32 @@ namespace MoversAndShakersScrapingService.Scrapers
         public class ScrapeMoversShakers
         {
             private IWebDriver driver;
-            public MoverCardDataModel GetListMoversShakesTable(MoversShakersTableEnum movertype, MTGFormatsEnum format, string elementXPath)
-            {
-                Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime("Waiting 5 seconds before we begin..."));
-                Thread.Sleep(5000);                
-                try
-                {
-                    var NewCard = new MoverCardDataModel.CardInfo();
-                    var DailyList = new MoverCardDataModel();
-                    DailyList. = new List<MoverCardDataModel.CardInfo>();
-                    driver = new GetSeleniumDriver().CreateDriver(driver);                   
-                    driver.Navigate().GoToUrl($"https://www.mtggoldfish.com/movers/paper/{format.ToString()}");
-                    var DailyChangeIncrease = driver.FindElements(By.XPath(elementXPath));
-                    int elementCounter = 0;
-                    int nameCounter = 0;
-                    string[] CardNames = DetermineCardNames(movertype);
+            //public MoverCardDataModel GetListMoversShakesTable(MTGFormatsEnum format)
+            //{
+            //    Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime("Waiting 5 seconds before we begin..."));
+            //    Thread.Sleep(5000);                
+            //    try
+            //    {
+            //        var scrapedData = new MoverCardDataModel();
+            //        var NewCard = new MoverCardDataModel.CardInfo();
+            //        driver = new GetSeleniumDriver().CreateDriver(driver);                   
+            //        driver.Navigate().GoToUrl($"https://www.mtggoldfish.com/movers/paper/{format.ToString()}");
+            //        var DailyChangeIncrease = driver.FindElements(By.XPath(elementXPath));
+            //        int elementCounter = 0;
+            //        int nameCounter = 0;
+            //        string[] CardNames = DetermineCardNames(movertype);
 
-                    foreach (var item in DailyChangeIncrease)
-                    {
-                        switch (elementCounter)
-                        {
-                            default:
-
-                                break;
-                            case 0:
-                                NewCard.PriceChange = item.Text;
-                                elementCounter++;
-                                break;
-                            case 1:
-                                NewCard.TotalPrice = item.Text;
-                                elementCounter++;
-                                break;
-                            case 2:
-                                NewCard.ChangePercentage = item.Text;
-                                elementCounter = 0;
-                                DailyList.ListOfCards.Add(NewCard);
-                                NewCard.Name = CardNames[nameCounter];
-                                nameCounter++;
-                                NewCard = new MoverCardDataModel.CardInfo();
-                                break;
-                        }
-
-                    }
-
-                    Console.WriteLine($"## Successfully acquired {movertype.ToString()}_{format.ToString()} ##");
-                    driver.Quit();
-                    return DailyList;
-                }
-                catch (Exception E)
-                {
-                    Console.WriteLine(E);
-                    driver.Quit();
-                    throw new Exception("Undefined exception occured. Selenium driver closed.");
-                }
-            }
+            //        Console.WriteLine($"## Successfully acquired {movertype.ToString()}_{format.ToString()} ##");
+            //        driver.Quit();
+            //        return scrapedData;
+            //    }
+            //    catch (Exception E)
+            //    {
+            //        Console.WriteLine(E);
+            //        driver.Quit();
+            //        throw new Exception("Undefined exception occured. Selenium driver closed.");
+            //    }
+            //}
 
             private List<MoverCardDataModel.CardInfo> GetListType(MoversShakersTableEnum moverType)
             {
@@ -101,6 +74,85 @@ namespace MoversAndShakersScrapingService.Scrapers
                     case MoversShakersTableEnum.WeeklyDecrease:
                         return GetWeeklyDecreaseNames();
                 }
+            }
+
+            public MoverCardDataModel GetSrapedMoversShakersData(MTGFormatsEnum format)
+            {
+                var scrapedData = new MoverCardDataModel();
+
+                driver = new GetSeleniumDriver().CreateDriver(driver);
+                driver.Navigate().GoToUrl($"https://www.mtggoldfish.com/movers/paper/{format.ToString()}");
+
+                scrapedData.Format = format.ToString();               
+
+                scrapedData.DailyIncreaseList = ScrapeMoversShakersData(MoversShakersTableEnum.DailyIncrease);
+                scrapedData.DailyDecreaseList = ScrapeMoversShakersData(MoversShakersTableEnum.DailyDecrease);
+
+                scrapedData.WeeklyIncreaseList = ScrapeMoversShakersData(MoversShakersTableEnum.WeeklyIncrease);
+                scrapedData.WeeklyDecreaseList = ScrapeMoversShakersData(MoversShakersTableEnum.WeeklyDecrease);
+
+                return scrapedData;
+
+            }
+
+            private List<MoverCardDataModel.CardInfo> ScrapeMoversShakersData(MoversShakersTableEnum table)
+            {
+                System.Collections.ObjectModel.ReadOnlyCollection<IWebElement> DailyChangeIncrease = null;
+                var cardInformation = new List<MoverCardDataModel.CardInfo>();
+                var NewCard = new MoverCardDataModel.CardInfo();
+                int elementCounter = 0;
+                string[] CardNames = new string[10];
+                int nameCounter = 0;
+
+                switch (table)
+                {
+                    case MoversShakersTableEnum.DailyIncrease:
+                        DailyChangeIncrease = driver.FindElements(By.XPath(MoversShakersMappings.DailyIncreaseXpath));
+                        CardNames = DetermineCardNames(table);
+                        break;
+                    case MoversShakersTableEnum.DailyDecrease:
+                        DailyChangeIncrease = driver.FindElements(By.XPath(MoversShakersMappings.DailyDecreaseXpath));
+                        CardNames = DetermineCardNames(table);
+                        break;
+                    case MoversShakersTableEnum.WeeklyIncrease:
+                        DailyChangeIncrease = driver.FindElements(By.XPath(MoversShakersMappings.WeeklyIncreaseXpath));
+                        CardNames = DetermineCardNames(table);
+                        break;
+                    case MoversShakersTableEnum.WeeklyDecrease:
+                        DailyChangeIncrease = driver.FindElements(By.XPath(MoversShakersMappings.WeeklyDecreaseXpath));
+                        CardNames = DetermineCardNames(table);
+                        break;
+                    default:
+                        return new List<MoverCardDataModel.CardInfo>();
+                }                
+
+                foreach (var item in DailyChangeIncrease)
+                {
+                    switch (elementCounter)
+                    {
+                        default:
+
+                            break;
+                        case 0:
+                            NewCard.PriceChange = item.Text;
+                            elementCounter++;
+                            break;
+                        case 1:
+                            NewCard.TotalPrice = item.Text;
+                            elementCounter++;
+                            break;
+                        case 2:
+                            NewCard.ChangePercentage = item.Text;
+                            elementCounter = 0;
+                            cardInformation.Add(NewCard);
+                            NewCard.Name = CardNames[nameCounter];
+                            nameCounter++;
+                            NewCard = new MoverCardDataModel.CardInfo();
+                            break;
+                    }
+                }
+
+                return cardInformation;
             }
 
             private string[] GetDailyIncreaseNames()
