@@ -43,7 +43,7 @@ namespace MoversAndShakersScrapingService.File_Management
             };
 
             fileSystem.SaveJsonFileToSpecificLocation(obj, fileLocation, $"SuccessfulScrapedTime.json");
-            Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime($"Scrape time updated to {DateTime.Now.ToString("dd MMM HH:mm:ss")}"));
+            Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime($"Scrape time updated to {DateTime.Now.ToString("dd MMM hh:mm:ss")}"));
         }
     }
 }

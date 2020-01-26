@@ -25,7 +25,7 @@ namespace MoversAndShakersScrapingService
             ScrapeMoversShakersJob();
             aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
             aTimer.Start();
-            Console.WriteLine($"\n Scraping service timer has started at {DateTime.Now.ToString("dd MMM HH:mm:ss")}");
+            Console.WriteLine($"\n Scraping service timer has started at {DateTime.Now.ToString("dd MMM hh:mm:ss")}");
 
             await Task.Delay(-1);
         }
@@ -45,7 +45,7 @@ namespace MoversAndShakersScrapingService
 
         private void ScrapeMoversShakersJob()
         {
-            Console.WriteLine($"Starting Job at {DateTime.Now.ToString("dd MMM HH:mm:ss")}..");
+            Console.WriteLine($"Starting Job at {DateTime.Now.ToString("dd MMM hh:mm:ss")}..");
             var stopWatch = new Stopwatch();
             stopWatch.Start();
             foreach (MTGFormatsEnum formatName in (MTGFormatsEnum[])Enum.GetValues(typeof(MTGFormatsEnum)))
@@ -56,7 +56,8 @@ namespace MoversAndShakersScrapingService
             }
             Console.Clear();
             stopWatch.Stop();
-            Console.WriteLine($"\n \n Job Complete at {DateTime.Now.ToString("dd MMM HH:mm:ss")} \n Elapsed Time: {stopWatch.Elapsed}");
+            Console.WriteLine($"\n \n Job Complete at {DateTime.Now.ToString("dd MMM hh:mm:ss")} \n Elapsed Time: {stopWatch.Elapsed}");
+            Console.WriteLine($"\n Next scrape will begin at {DateTime.Now.AddMinutes(45).ToString("dd MMM hh:mm:ss")}");
             if (completedFormats.Count > 0)
             {
                 MoversShakersJSONController.UpdateScrapeTime();
