@@ -15,16 +15,10 @@ namespace MoversAndShakersScrapingService
     {
         private Timer aTimer = new Timer();
         private List<string> completedFormats = new List<string>();
-        public Program()
-        {
-            aTimer.Interval = 2700000;
-        }
         static void Main(string[] args) => new Program().MainAsync().GetAwaiter().GetResult();
         private async Task MainAsync()
         {
-            ScrapeMoversShakersJob();
-            aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-            aTimer.Start();
+            ScrapeMoversShakersJob();            
             Console.WriteLine($"\n Scraping service timer has started at {DateTime.Now.ToString("dd MMM hh:mm:ss")}");
 
             await Task.Delay(-1);
@@ -63,12 +57,12 @@ namespace MoversAndShakersScrapingService
                 MoversShakersJSONController.UpdateScrapeTime();
                 Console.WriteLine($"\n Formats Updated: \n");
                 foreach (var item in completedFormats)
-                {
-                    Console.WriteLine("\n");
+                {                    
                     Console.WriteLine(item);
                 }
                 completedFormats = new List<string>();
             }
+            ResetTimer();
         }
 
         /// <summary>
@@ -109,6 +103,16 @@ namespace MoversAndShakersScrapingService
                     break;
                 }
             }
+        }
+
+        private void ResetTimer()
+        {
+            aTimer.Dispose();
+            aTimer = new Timer();
+            aTimer.Interval = 2700000;
+            aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            aTimer.Start();
+            Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime("\n Timer Reset."));
         }
     }
 }
