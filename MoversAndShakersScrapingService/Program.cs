@@ -1,5 +1,4 @@
 ﻿using MoversAndShakersScrapingService.Data_Models;
-using MoversAndShakersScrapingService.Element_Maps;
 using MoversAndShakersScrapingService.Enums;
 using MoversAndShakersScrapingService.File_Management;
 using MoversAndShakersScrapingService.Helpers;
@@ -16,17 +15,11 @@ namespace MoversAndShakersScrapingService
     {
         private Timer aTimer = new Timer();
         private List<string> completedFormats = new List<string>();
-        public Program()
-        {
-            aTimer.Interval = 2700000;
-        }
         static void Main(string[] args) => new Program().MainAsync().GetAwaiter().GetResult();
         private async Task MainAsync()
         {
-            ScrapeMoversShakersJob();
-            aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-            aTimer.Start();
-            Console.WriteLine($"Scraping Service has started at {DateTime.Now.ToString("dd MMM HH:mm:ss")}");
+            ScrapeMoversShakersJob();            
+            Console.WriteLine($"\n Scraping service timer has started at {DateTime.Now.ToString("dd MMM hh:mm:ss")}");
 
             await Task.Delay(-1);
         }
@@ -46,41 +39,30 @@ namespace MoversAndShakersScrapingService
 
         private void ScrapeMoversShakersJob()
         {
-            Console.WriteLine($"Starting Job at {DateTime.Now.ToString("dd MMM HH:mm:ss")}..");
+            Console.WriteLine($"Starting Job at {DateTime.Now.ToString("dd MMM hh:mm:ss")}..");
             var stopWatch = new Stopwatch();
             stopWatch.Start();
             foreach (MTGFormatsEnum formatName in (MTGFormatsEnum[])Enum.GetValues(typeof(MTGFormatsEnum)))
             {
-                ScrapeMoversShakers Format = new ScrapeMoversShakers();
-                var newDailyIncrease = Format.GetListMoversShakesTable(MoversShakersTableEnum.DailyIncrease, formatName, MoversShakersMappings.DailyIncreaseXpath);
-                var oldDailyIncrease = MoversShakersJSONController.ReadMoversShakersJsonByName($"{MoversShakersTableEnum.DailyIncrease.ToString()}_{formatName.ToString()}.json");
-                DetermineNewData(newDailyIncrease, oldDailyIncrease, MoversShakersTableEnum.DailyIncrease, formatName);
-
-                var newDailyDecrease = Format.GetListMoversShakesTable(MoversShakersTableEnum.DailyDecrease, formatName, MoversShakersMappings.DailyDecreaseXpath);
-                var oldDailyDecrease = MoversShakersJSONController.ReadMoversShakersJsonByName($"{MoversShakersTableEnum.DailyDecrease.ToString()}_{formatName.ToString()}.json");
-                DetermineNewData(newDailyDecrease, oldDailyDecrease, MoversShakersTableEnum.DailyDecrease, formatName);
-
-                var newWeeklyIncrease = Format.GetListMoversShakesTable(MoversShakersTableEnum.WeeklyIncrease, formatName, MoversShakersMappings.WeeklyIncreaseXpath);
-                var oldWeeklyIncrease = MoversShakersJSONController.ReadMoversShakersJsonByName($"{MoversShakersTableEnum.WeeklyIncrease.ToString()}_{formatName.ToString()}.json");
-                DetermineNewData(newWeeklyIncrease, oldWeeklyIncrease, MoversShakersTableEnum.WeeklyIncrease, formatName);
-
-                var newWeeklyDecrease = Format.GetListMoversShakesTable(MoversShakersTableEnum.WeeklyDecrease, formatName, MoversShakersMappings.WeeklyDecreaseXpath);
-                var oldWeeklyDecrease = MoversShakersJSONController.ReadMoversShakersJsonByName($"{MoversShakersTableEnum.WeeklyDecrease.ToString()}_{formatName.ToString()}.json");
-                DetermineNewData(newWeeklyDecrease, oldWeeklyDecrease, MoversShakersTableEnum.WeeklyDecrease, formatName);
+                var newScrapedData = new ScrapeMoversShakers().GetSrapedMoversShakersData(formatName).GetAwaiter().GetResult();
+                var oldScrapedData = MoversShakersJSONController.ReadMoversShakersJsonByName($"{formatName.ToString()}.json");
+                DetermineNewData(newScrapedData, oldScrapedData, formatName);
             }
-            Console.Clear();            
-            stopWatch.Stop();            
-            Console.WriteLine($"\n \n Job Complete at {DateTime.Now.ToString("dd MMM HH:mm:ss")} \n Elapsed Time: {stopWatch.Elapsed}");
+            Console.Clear();
+            stopWatch.Stop();
+            Console.WriteLine($"\n \n Job Complete at {DateTime.Now.ToString("dd MMM hh:mm:ss")} \n Elapsed Time: {stopWatch.Elapsed}");
+            Console.WriteLine($"\n Next scrape will begin at {DateTime.Now.AddMinutes(45).ToString("dd MMM hh:mm:ss")}");
             if (completedFormats.Count > 0)
             {
                 MoversShakersJSONController.UpdateScrapeTime();
-                Console.WriteLine("Formats Updated:");
+                Console.WriteLine($"\n Formats Updated: ");
                 foreach (var item in completedFormats)
-                {
-                    Console.WriteLine(item);
+                {                    
+                    Console.Write(item);
                 }
                 completedFormats = new List<string>();
             }
+            ResetTimer();
         }
 
         /// <summary>
@@ -90,36 +72,48 @@ namespace MoversAndShakersScrapingService
         /// <param name="oldDailyIncrease"></param>
         /// <param name="movertype"></param>
         /// <param name="format"></param>
-        private void DetermineNewData(MoverCardDataModel newScrapedData, MoverCardDataModel oldScrapedData, MoversShakersTableEnum movertype, MTGFormatsEnum format)
+        private void DetermineNewData(MoverCardDataModel newScrapedData, MoverCardDataModel oldScrapedData, MTGFormatsEnum format)
         {
             MoverCardDataEqualityComparer Compare = new MoverCardDataEqualityComparer();
             newScrapedData.Format = format.ToString();
 
             if (oldScrapedData == null)
             {
-                MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{movertype.ToString()}_{format.ToString()}.json");
+                MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{format.ToString()}.json");
+                Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime($"Successfully created {format.ToString()}.json"));
             }
-            if (newScrapedData.ListOfCards.Count != 0 && oldScrapedData.ListOfCards.Count != 0)
+            if (newScrapedData.DailyIncreaseList.Count != 0 && oldScrapedData.DailyIncreaseList.Count != 0)
             {
-                for (var i = 0; i < newScrapedData.ListOfCards.Count; i++)
+                for (var i = 0; i < newScrapedData.DailyIncreaseList.Count; i++)
                 {
-                    if (!Compare.Equals(newScrapedData.ListOfCards[i], oldScrapedData.ListOfCards[i]))
-                    {                        
-                        Console.WriteLine($"{nameof(newScrapedData.ListOfCards)} and {nameof(oldScrapedData.ListOfCards)} Differ. Writing to disk...");
-                        MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{movertype.ToString()}_{format.ToString()}.json");
-                        completedFormats.Add($"{newScrapedData.Format}_{movertype.ToString()}");
+                    if (!Compare.Equals(newScrapedData.DailyIncreaseList[i], oldScrapedData.DailyIncreaseList[i]))
+                    {
+                        Console.WriteLine($"New: {newScrapedData.Format} and Old: {oldScrapedData.Format} Differ. Writing to disk...");
+                        MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{format.ToString()}.json");
+                        completedFormats.Add($"{newScrapedData.Format}");
                         break;
                     }
                 }
             }
-            else if (newScrapedData.ListOfCards.Count > 0 && oldScrapedData.ListOfCards.Count == 0)
+            else if (newScrapedData.DailyIncreaseList.Count > 0 && oldScrapedData.DailyIncreaseList.Count == 0)
             {
-                for (var i = 0; i < newScrapedData.ListOfCards.Count; i++)
+                for (int i = 0; i < newScrapedData.DailyIncreaseList.Count; i++)
                 {
-                    MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{movertype.ToString()}_{format.ToString()}.json");
+                    MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{format.ToString()}.json");
                     break;
                 }
             }
+        }
+
+        private void ResetTimer()
+        {
+            aTimer.Dispose();
+            aTimer = new Timer();
+            aTimer.Interval = 2700000;
+            aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            aTimer.Start();
+            Console.WriteLine("\n");
+            Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime("Timer Reset."));
         }
     }
 }
