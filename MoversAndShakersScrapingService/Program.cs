@@ -55,10 +55,10 @@ namespace MoversAndShakersScrapingService
             if (completedFormats.Count > 0)
             {
                 MoversShakersJSONController.UpdateScrapeTime();
-                Console.WriteLine($"\n Formats Updated: \n");
+                Console.WriteLine($"\n Formats Updated: ");
                 foreach (var item in completedFormats)
                 {                    
-                    Console.WriteLine(item);
+                    Console.Write(item);
                 }
                 completedFormats = new List<string>();
             }
@@ -112,7 +112,8 @@ namespace MoversAndShakersScrapingService
             aTimer.Interval = 2700000;
             aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
             aTimer.Start();
-            Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime("\n Timer Reset."));
+            Console.WriteLine("\n");
+            Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime("Timer Reset."));
         }
     }
 }
