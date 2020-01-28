@@ -4,7 +4,5 @@
     {
         DailyIncrease,
         DailyDecrease,
-        WeeklyIncrease,
-        WeeklyDecrease
     }
 }

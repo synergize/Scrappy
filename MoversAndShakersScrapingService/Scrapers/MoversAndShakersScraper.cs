@@ -32,8 +32,8 @@ namespace MoversAndShakersScrapingService.Scrapers
                     scrapedData.DailyIncreaseList = ScrapeMoversShakersData(MoversShakersTableEnum.DailyIncrease);
                     scrapedData.DailyDecreaseList = ScrapeMoversShakersData(MoversShakersTableEnum.DailyDecrease);
 
-                    scrapedData.WeeklyIncreaseList = ScrapeMoversShakersData(MoversShakersTableEnum.WeeklyIncrease);
-                    scrapedData.WeeklyDecreaseList = ScrapeMoversShakersData(MoversShakersTableEnum.WeeklyDecrease);
+                    //scrapedData.WeeklyIncreaseList = ScrapeMoversShakersData(MoversShakersTableEnum.WeeklyIncrease);
+                    //scrapedData.WeeklyDecreaseList = ScrapeMoversShakersData(MoversShakersTableEnum.WeeklyDecrease);
                 }
                 catch (Exception e)
                 {
@@ -65,14 +65,14 @@ namespace MoversAndShakersScrapingService.Scrapers
                         DailyChangeIncrease = driver.FindElements(By.XPath(MoversShakersMappings.DailyDecreaseXpath));
                         CardNames = DetermineCardNames(table);
                         break;
-                    case MoversShakersTableEnum.WeeklyIncrease:
-                        DailyChangeIncrease = driver.FindElements(By.XPath(MoversShakersMappings.WeeklyIncreaseXpath));
-                        CardNames = DetermineCardNames(table);
-                        break;
-                    case MoversShakersTableEnum.WeeklyDecrease:
-                        DailyChangeIncrease = driver.FindElements(By.XPath(MoversShakersMappings.WeeklyDecreaseXpath));
-                        CardNames = DetermineCardNames(table);
-                        break;
+                    //case MoversShakersTableEnum.WeeklyIncrease:
+                    //    DailyChangeIncrease = driver.FindElements(By.XPath(MoversShakersMappings.WeeklyIncreaseXpath));
+                    //    CardNames = DetermineCardNames(table);
+                    //    break;
+                    //case MoversShakersTableEnum.WeeklyDecrease:
+                    //    DailyChangeIncrease = driver.FindElements(By.XPath(MoversShakersMappings.WeeklyDecreaseXpath));
+                    //    CardNames = DetermineCardNames(table);
+                    //    break;
                     default:
                         return new List<MoverCardDataModel.CardInfo>();
                 }
@@ -116,10 +116,10 @@ namespace MoversAndShakersScrapingService.Scrapers
                         return GetDailyIncreaseNames();
                     case MoversShakersTableEnum.DailyDecrease:
                         return GetDailyDecreaseNames();
-                    case MoversShakersTableEnum.WeeklyIncrease:
-                        return GetWeeklyIncreaseNames();
-                    case MoversShakersTableEnum.WeeklyDecrease:
-                        return GetWeeklyDecreaseNames();
+                    //case MoversShakersTableEnum.WeeklyIncrease:
+                    //    return GetWeeklyIncreaseNames();
+                    //case MoversShakersTableEnum.WeeklyDecrease:
+                    //    return GetWeeklyDecreaseNames();
                 }
             }
 
@@ -163,46 +163,46 @@ namespace MoversAndShakersScrapingService.Scrapers
                 return NameArry;
             }
 
-            private string[] GetWeeklyIncreaseNames()
-            {
-                string[] NameArry = new string[10];
+            //private string[] GetWeeklyIncreaseNames()
+            //{
+            //    string[] NameArry = new string[10];
 
-                for (int i = 0; i < NameArry.Length; i++)
-                {
-                    try
-                    {
-                        var Name = driver.FindElement(By.XPath($"/html/body/main/div[7]/div[1]/div/div/div[1]/table/tbody/tr[{i + 1}]/td[4]/a"));
-                        NameArry[i] = Name.Text;
-                    }
-                    catch (Exception)
-                    {
-                        driver.Quit();
-                        return new string[10];
-                    }
+            //    for (int i = 0; i < NameArry.Length; i++)
+            //    {
+            //        try
+            //        {
+            //            var Name = driver.FindElement(By.XPath($"/html/body/main/div[7]/div[1]/div/div/div[1]/table/tbody/tr[{i + 1}]/td[4]/a"));
+            //            NameArry[i] = Name.Text;
+            //        }
+            //        catch (Exception)
+            //        {
+            //            driver.Quit();
+            //            return new string[10];
+            //        }
 
-                }
-                return NameArry;
-            }
+            //    }
+            //    return NameArry;
+            //}
 
-            private string[] GetWeeklyDecreaseNames()
-            {
-                string[] NameArry = new string[10];
+            //private string[] GetWeeklyDecreaseNames()
+            //{
+            //    string[] NameArry = new string[10];
 
-                for (int i = 0; i < NameArry.Length; i++)
-                {
-                    try
-                    {
-                        var Name = driver.FindElement(By.XPath($"/html/body/main/div[7]/div[1]/div/div/div[2]/table/tbody/tr[{i + 1}]/td[4]/a"));
-                        NameArry[i] = Name.Text;
-                    }
-                    catch (Exception)
-                    {
-                        driver.Quit();
-                        return new string[10];
-                    }
-                }
-                return NameArry;
-            }
+            //    for (int i = 0; i < NameArry.Length; i++)
+            //    {
+            //        try
+            //        {
+            //            var Name = driver.FindElement(By.XPath($"/html/body/main/div[7]/div[1]/div/div/div[2]/table/tbody/tr[{i + 1}]/td[4]/a"));
+            //            NameArry[i] = Name.Text;
+            //        }
+            //        catch (Exception)
+            //        {
+            //            driver.Quit();
+            //            return new string[10];
+            //        }
+            //    }
+            //    return NameArry;
+            //}
         }
     }
 }
