@@ -62,7 +62,6 @@ namespace MoversAndShakersScrapingService
                 }
                 completedFormats = new List<string>();
             }
-            ResetTimer();
         }
 
         /// <summary>
@@ -74,19 +73,26 @@ namespace MoversAndShakersScrapingService
         /// <param name="format"></param>
         private void DetermineNewData(MoverCardDataModel newScrapedData, MoverCardDataModel oldScrapedData, MTGFormatsEnum format)
         {
-            MoverCardDataEqualityComparer Compare = new MoverCardDataEqualityComparer();
             newScrapedData.Format = format.ToString();
 
             if (oldScrapedData == null)
             {
-                MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{format.ToString()}.json");
+                // This resolved a null reference error below when checking the list if the json document doesn't exist. 
+                // Will need to update MoversShakersJSONController.WriteMoverShakersJsonByFileName to return the object it writes at a later date.                
+                oldScrapedData = new MoverCardDataModel
+                {
+                    DailyIncreaseList = new List<MoverCardDataModel.CardInfo>(),
+                    DailyDecreaseList = new List<MoverCardDataModel.CardInfo>()
+                };
+
+                MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{format.ToString()}.json");                
                 Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime($"Successfully created {format.ToString()}.json"));
             }
             if (newScrapedData.DailyIncreaseList.Count != 0 && oldScrapedData.DailyIncreaseList.Count != 0)
             {
                 for (var i = 0; i < newScrapedData.DailyIncreaseList.Count; i++)
                 {
-                    if (!Compare.Equals(newScrapedData.DailyIncreaseList[i], oldScrapedData.DailyIncreaseList[i]))
+                    if (!new MoverCardDataEqualityComparer().Equals(newScrapedData.DailyIncreaseList[i], oldScrapedData.DailyIncreaseList[i]))
                     {
                         Console.WriteLine($"New: {newScrapedData.Format} and Old: {oldScrapedData.Format} Differ. Writing to disk...");
                         MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{format.ToString()}.json");
@@ -103,17 +109,6 @@ namespace MoversAndShakersScrapingService
                     break;
                 }
             }
-        }
-
-        private void ResetTimer()
-        {
-            aTimer.Dispose();
-            aTimer = new Timer();
-            aTimer.Interval = 2700000;
-            aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-            aTimer.Start();
-            Console.WriteLine("\n");
-            Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime("Timer Reset."));
         }
     }
 }
