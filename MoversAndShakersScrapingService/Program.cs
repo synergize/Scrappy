@@ -62,6 +62,7 @@ namespace MoversAndShakersScrapingService
                 }
                 completedFormats = new List<string>();
             }
+            ResetTimer();
         }
 
         /// <summary>
@@ -109,6 +110,16 @@ namespace MoversAndShakersScrapingService
                     break;
                 }
             }
+        }
+        private void ResetTimer()
+        {
+            aTimer.Dispose();
+            aTimer = new Timer();
+            aTimer.Interval = 2700000;
+            aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+            aTimer.Start();
+            Console.WriteLine("\n");
+            Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime("Timer Reset."));
         }
     }
 }
