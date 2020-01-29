@@ -2,6 +2,7 @@
 using MoversAndShakersScrapingService.Enums;
 using MoversAndShakersScrapingService.File_Management;
 using MoversAndShakersScrapingService.Helpers;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -120,6 +121,12 @@ namespace MoversAndShakersScrapingService
             aTimer.Start();
             Console.WriteLine("\n");
             Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime("Timer Reset."));
+        }
+
+        private void SetupLogger()
+        {
+            var log = new LoggerConfiguration()
+                .WriteTo.File()
         }
     }
 }
