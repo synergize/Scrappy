@@ -91,7 +91,8 @@ namespace MoversAndShakersScrapingService
                 };
 
                 MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{format.ToString()}.json");                
-                Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime($"Successfully created {format.ToString()}.json"));
+                Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime($"{nameof(oldScrapedData)} was null. Created {format.ToString()}.json"));
+                completedFormats.Add($"{newScrapedData.Format}");
             }
             if (newScrapedData.DailyIncreaseList.Count != 0 && oldScrapedData.DailyIncreaseList.Count != 0)
             {
@@ -110,6 +111,7 @@ namespace MoversAndShakersScrapingService
             {
                 for (int i = 0; i < newScrapedData.DailyIncreaseList.Count; i++)
                 {
+                    Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime($"{nameof(oldScrapedData.DailyIncreaseList)} was empty. Created {format.ToString()}.json"));
                     MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{format.ToString()}.json");
                     break;
                 }
