@@ -2,8 +2,8 @@
 using MoversAndShakersScrapingService.Helpers;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
-using System.Reflection;
 using VTFileSystemManagement;
 
 namespace MoversAndShakersScrapingService.File_Management
@@ -22,7 +22,12 @@ namespace MoversAndShakersScrapingService.File_Management
             }
             else
             {
-                return null;
+                return new MoverCardDataModel
+                {
+                    DailyIncreaseList = new List<MoverCardDataModel.CardInfo>(),
+                    DailyDecreaseList = new List<MoverCardDataModel.CardInfo>(),
+                    PageLastUpdated = DateTime.MinValue
+                };
             }
         }
 
@@ -43,7 +48,6 @@ namespace MoversAndShakersScrapingService.File_Management
             };
 
             fileSystem.SaveJsonFileToSpecificLocation(obj, fileLocation, $"SuccessfulScrapedTime.json");
-            Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime($"Scrape time updated to {DateTime.Now.ToString("dd MMM hh:mm:ss")}"));
         }
     }
 }

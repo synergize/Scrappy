@@ -19,8 +19,6 @@ namespace MoversAndShakersScrapingService
         private async Task MainAsync()
         {
             ScrapeMoversShakersJob();            
-            Console.WriteLine($"\n Scraping service timer has started at {DateTime.Now.ToString("dd MMM hh:mm:ss")}");
-
             await Task.Delay(-1);
         }
 
@@ -39,7 +37,7 @@ namespace MoversAndShakersScrapingService
 
         private void ScrapeMoversShakersJob()
         {
-            Console.WriteLine($"Starting Job at {DateTime.Now.ToString("dd MMM hh:mm:ss")}..");
+            Console.WriteLine($" Starting Job at {DateTime.Now.ToString("dd MMM hh:mm:ss")}..");
             var stopWatch = new Stopwatch();
             stopWatch.Start();
             foreach (MTGFormatsEnum formatName in (MTGFormatsEnum[])Enum.GetValues(typeof(MTGFormatsEnum)))
@@ -63,8 +61,12 @@ namespace MoversAndShakersScrapingService
                 }
                 output = output.Trim();
                 output = output.TrimEnd(',');
-                Console.WriteLine();
+                Console.WriteLine($"\n {output}");
                 completedFormats = new List<string>();
+            }
+            else
+            {
+                Console.WriteLine("\n No Formats Updated. :(");
             }
             ResetTimer();
         }
@@ -80,20 +82,6 @@ namespace MoversAndShakersScrapingService
         {
             newScrapedData.Format = format.ToString();
 
-            if (oldScrapedData == null)
-            {
-                // This resolved a null reference error below when checking the list if the json document doesn't exist. 
-                // Will need to update MoversShakersJSONController.WriteMoverShakersJsonByFileName to return the object it writes at a later date.                
-                oldScrapedData = new MoverCardDataModel
-                {
-                    DailyIncreaseList = new List<MoverCardDataModel.CardInfo>(),
-                    DailyDecreaseList = new List<MoverCardDataModel.CardInfo>()
-                };
-
-                MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{format.ToString()}.json");                
-                Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime($"{nameof(oldScrapedData)} was null. Created {format.ToString()}.json"));
-                completedFormats.Add($"{newScrapedData.Format}");
-            }
             if (newScrapedData.DailyIncreaseList.Count != 0 && oldScrapedData.DailyIncreaseList.Count != 0)
             {
                 for (var i = 0; i < newScrapedData.DailyIncreaseList.Count; i++)
@@ -111,12 +99,14 @@ namespace MoversAndShakersScrapingService
             {
                 for (int i = 0; i < newScrapedData.DailyIncreaseList.Count; i++)
                 {
-                    Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime($"{nameof(oldScrapedData.DailyIncreaseList)} was empty. Created {format.ToString()}.json"));
+                    Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime($"{nameof(oldScrapedData)}.{nameof(oldScrapedData.DailyIncreaseList)} was empty. Created {format.ToString()}.json"));
                     MoversShakersJSONController.WriteMoverShakersJsonByFileName(newScrapedData, $"{format.ToString()}.json");
+                    completedFormats.Add($"{newScrapedData.Format}");
                     break;
                 }
             }
         }
+
         private void ResetTimer()
         {
             aTimer.Dispose();
@@ -125,7 +115,7 @@ namespace MoversAndShakersScrapingService
             aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
             aTimer.Start();
             Console.WriteLine("\n");
-            Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime("Timer Reset."));
+            Console.WriteLine(" Timer Reset.");
         }
     }
 }

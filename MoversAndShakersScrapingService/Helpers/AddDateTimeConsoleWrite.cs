@@ -6,7 +6,7 @@ namespace MoversAndShakersScrapingService.Helpers
     {
         public static string AddDateTime(string message)
         {
-            return $"[[{DateTime.Now.ToString("hh:mm:ss")}]]: {message}";
+            return $" [[{DateTime.Now.ToString("hh:mm:ss")}]]: {message}";
         }
     }
 }

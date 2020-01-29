@@ -43,10 +43,9 @@ namespace MoversAndShakersScrapingService.Scrapers
                     Console.WriteLine(e.Message);
                 }
 
-                Console.WriteLine($"## Successfully scraped {format.ToString()} ##");
+                Console.WriteLine(AddDateTimeConsoleWrite.AddDateTime($"### Successfully scraped {format.ToString()}. Quitting Driver.. ###"));
                 driver.Quit();
                 return scrapedData;
-
             }
 
             private List<MoverCardDataModel.CardInfo> ScrapeMoversShakersData(MoversShakersTableEnum table)
