@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace MoversAndShakersScrapingService.Data_Models
@@ -23,5 +24,7 @@ namespace MoversAndShakersScrapingService.Data_Models
         //public List<CardInfo> WeeklyDecreaseList { get; set; }
         [JsonProperty("FormatName")]
         public string Format { get; set; }
+        public DateTime PageLastUpdated { get; set; }
+
     }
 }

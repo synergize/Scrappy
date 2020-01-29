@@ -25,6 +25,9 @@ namespace MoversAndShakersScrapingService.Scrapers
                 driver = new GetSeleniumDriver().CreateDriver(driver);
                 driver.Navigate().GoToUrl($"https://www.mtggoldfish.com/movers/paper/{format.ToString()}");
 
+                var pageUpdatedTime = driver.FindElement(MoversShakersMappings.PageLastUpdatedXpath).GetAttribute("title").Replace("UTC", "");             
+                DateTime.TryParse(pageUpdatedTime, out DateTime parsedPageUpdatedTime);
+                scrapedData.PageLastUpdated = parsedPageUpdatedTime;
                 scrapedData.Format = format.ToString();
 
                 try
@@ -58,19 +61,19 @@ namespace MoversAndShakersScrapingService.Scrapers
                 switch (table)
                 {
                     case MoversShakersTableEnum.DailyIncrease:
-                        DailyChangeIncrease = driver.FindElements(By.XPath(MoversShakersMappings.DailyIncreaseXpath));
+                        DailyChangeIncrease = driver.FindElements(MoversShakersMappings.DailyIncreaseXpath);
                         CardNames = DetermineCardNames(table);
                         break;
                     case MoversShakersTableEnum.DailyDecrease:
-                        DailyChangeIncrease = driver.FindElements(By.XPath(MoversShakersMappings.DailyDecreaseXpath));
+                        DailyChangeIncrease = driver.FindElements(MoversShakersMappings.DailyDecreaseXpath);
                         CardNames = DetermineCardNames(table);
                         break;
                     //case MoversShakersTableEnum.WeeklyIncrease:
-                    //    DailyChangeIncrease = driver.FindElements(By.XPath(MoversShakersMappings.WeeklyIncreaseXpath));
+                    //    DailyChangeIncrease = driver.FindElements(MoversShakersMappings.WeeklyIncreaseXpath);
                     //    CardNames = DetermineCardNames(table);
                     //    break;
                     //case MoversShakersTableEnum.WeeklyDecrease:
-                    //    DailyChangeIncrease = driver.FindElements(By.XPath(MoversShakersMappings.WeeklyDecreaseXpath));
+                    //    DailyChangeIncrease = driver.FindElements(MoversShakersMappings.WeeklyDecreaseXpath);
                     //    CardNames = DetermineCardNames(table);
                     //    break;
                     default:
@@ -101,8 +104,7 @@ namespace MoversAndShakersScrapingService.Scrapers
                             NewCard = new MoverCardDataModel.CardInfo();
                             break;
                     }
-                }
-
+                }                
                 return cardInformation;
             }
 
