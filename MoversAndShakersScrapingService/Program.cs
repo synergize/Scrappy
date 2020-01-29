@@ -56,10 +56,14 @@ namespace MoversAndShakersScrapingService
             {
                 MoversShakersJSONController.UpdateScrapeTime();
                 Console.WriteLine($"\n Formats Updated: ");
+                var output = "";
                 foreach (var item in completedFormats)
-                {                    
-                    Console.Write(item);
+                {
+                    output += $"{item}, ";
                 }
+                output = output.Trim();
+                output = output.TrimEnd(',');
+                Console.WriteLine();
                 completedFormats = new List<string>();
             }
             ResetTimer();
