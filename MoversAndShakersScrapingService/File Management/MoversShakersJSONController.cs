@@ -8,17 +8,17 @@ using VTFileSystemManagement;
 
 namespace MoversAndShakersScrapingService.File_Management
 {
-    class MoversShakersJSONController
+    internal class MoversShakersJsonController
     {
-        private static string fileLocation = ConfigurationManager.AppSettings.Get("MoversShakersScrapedDataDirectory");
+        private static readonly string FileLocation = ConfigurationManager.AppSettings.Get("MoversShakersScrapedDataDirectory");
 
         public static MoverCardDataModel ReadMoversShakersJsonByName(string fileName)
         {
             FileSystemManager fileSystem = new FileSystemManager();
 
-            if (fileSystem.IsFileExists(fileName, fileLocation))
+            if (fileSystem.IsFileExists(fileName, FileLocation))
             {                
-                return JsonConvert.DeserializeObject<MoverCardDataModel>(fileSystem.ReadJsonFileFromSpecificLocation(fileName, fileLocation));
+                return JsonConvert.DeserializeObject<MoverCardDataModel>(fileSystem.ReadJsonFileFromSpecificLocation(fileName, FileLocation));
             }
             else
             {
@@ -33,21 +33,21 @@ namespace MoversAndShakersScrapingService.File_Management
 
         public static void WriteMoverShakersJsonByFileName(object obj, string fileName)
         {
-            FileSystemManager fileSystem = new FileSystemManager();
-            fileSystem.SaveJsonFileToSpecificLocation(obj, fileLocation, fileName);
+            var fileSystem = new FileSystemManager();
+            fileSystem.SaveJsonFileToSpecificLocation(obj, FileLocation, fileName);
         }
 
         public static void UpdateScrapeTime()
         {
             var currentTime = DateTime.Now;
-            FileSystemManager fileSystem = new FileSystemManager();
+            var fileSystem = new FileSystemManager();
 
             var obj = new MoversAndShakersServerInfoDataModel
             {
                 LastSuccessfulScrape = currentTime
             };
 
-            fileSystem.SaveJsonFileToSpecificLocation(obj, fileLocation, $"SuccessfulScrapedTime.json");
+            fileSystem.SaveJsonFileToSpecificLocation(obj, FileLocation, $"SuccessfulScrapedTime.json");
         }
     }
 }

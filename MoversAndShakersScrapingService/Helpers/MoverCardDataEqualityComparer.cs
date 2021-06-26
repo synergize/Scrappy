@@ -11,23 +11,18 @@ namespace MoversAndShakersScrapingService.Helpers
             {
                 return true;
             }
-            else if (x == null || y == null)
+
+            if (x == null || y == null)
             {
                 return false;
             }
-            else if (x.PriceChange == y.PriceChange && x.Name == y.Name && x.TotalPrice == y.TotalPrice && x.ChangePercentage == y.ChangePercentage)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+
+            return x.PriceChange == y.PriceChange && x.Name == y.Name && x.TotalPrice == y.TotalPrice && x.ChangePercentage == y.ChangePercentage;
         }
 
         public int GetHashCode(CardInfo obj)
         {
-            int hCode = obj.ChangePercentage.GetHashCode() ^ obj.Name.GetHashCode() ^ obj.PriceChange.GetHashCode() ^ obj.TotalPrice.GetHashCode();
+            var hCode = obj.ChangePercentage.GetHashCode() ^ obj.Name.GetHashCode() ^ obj.PriceChange.GetHashCode() ^ obj.TotalPrice.GetHashCode();
             return hCode.GetHashCode();
         }
     }
