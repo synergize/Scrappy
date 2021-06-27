@@ -4,15 +4,13 @@ using MoversAndShakersScrapingService.File_Management;
 using MoversAndShakersScrapingService.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
-using System.Net.Mime;
 using System.Threading.Tasks;
 using System.Timers;
 using CommandLine;
 using MoversAndShakersScrapingService.Options;
-using static MoversAndShakersScrapingService.Scrapers.MoversAndShakersScraper;
+using MoversAndShakersScrapingService.Scrapers;
 
 namespace MoversAndShakersScrapingService
 {
@@ -52,8 +50,8 @@ namespace MoversAndShakersScrapingService
             stopWatch.Start();
             foreach (var formatName in (MTGFormatsEnum[])Enum.GetValues(typeof(MTGFormatsEnum)))
             {
-                var newScrapedData = new ScrapeMoversShakers().GetSrapedMoversShakersData(formatName).GetAwaiter().GetResult();
-                var oldScrapedData = MoversShakersJsonController.ReadMoversShakersJsonByName($"{formatName.ToString()}.json");
+                var newScrapedData = new MoversAndShakersScraper().GetSrapedMoversShakersData(formatName);
+                var oldScrapedData = MoversShakersJsonController.ReadMoversShakersJsonByName($"{formatName}.json");
                 DetermineNewData(newScrapedData, oldScrapedData, formatName);
             }
             Console.Clear();
