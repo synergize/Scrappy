@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "MoversAndShakersScrapingService": {
+      "commandName": "Project",
+      "commandLineArgs": "--WebDriverLocation C:\\ChromeDriver --intervalDays 0 --intervalSeconds 15"
+    }
+  }
+}
