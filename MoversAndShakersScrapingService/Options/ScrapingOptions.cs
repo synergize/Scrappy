@@ -16,9 +16,6 @@ namespace MoversAndShakersScrapingService.Options
         [Option("intervalSeconds", SetName = "ParameterSet", HelpText = "Interval in which scraping will happen in seconds")]
         public int IntervalSeconds { get; set; }
 
-        [Option("WebDriverLocation", SetName = "WebDriverSet", Required = true, HelpText = "Location Of Web Driver")]
-        public string WebDriverLocation { get; set; }
-
         [Option("IsHeadless", SetName = "HeadlessSet", HelpText = "Determines if web scraped using headless mode")]
         public bool IsHeadless { get; set; }
     }
