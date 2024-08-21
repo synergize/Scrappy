@@ -3,14 +3,16 @@ using MoversAndShakersScrapingService.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using VTFileSystemManagement;
+using MoversAndShakersScrapingService.Managers;
+using ConfigurationManager = System.Configuration.ConfigurationManager;
+using System.IO;
+using System.Reflection;
 
 namespace MoversAndShakersScrapingService.File_Management
 {
     internal class MoversShakersJsonController
     {
-        private static readonly string FileLocation = ConfigurationManager.AppSettings.Get("MoversShakersScrapedDataDirectory");
+        private static readonly string FileLocation = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 
         public static MoverCardDataModel ReadMoversShakersJsonByName(string fileName)
         {

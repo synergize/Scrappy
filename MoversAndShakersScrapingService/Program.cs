@@ -5,12 +5,19 @@ using MoversAndShakersScrapingService.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Timers;
 using CommandLine;
+using Microsoft.AspNetCore.SignalR.Client;
 using MoversAndShakersScrapingService.Options;
 using MoversAndShakersScrapingService.Scrapers;
+using Newtonsoft.Json;
+using System.Reflection;
+using System.IO.Compression;
 
 namespace MoversAndShakersScrapingService
 {
@@ -22,9 +29,10 @@ namespace MoversAndShakersScrapingService
         private static void Main(string[] args) => new Program().MainAsync(args).GetAwaiter().GetResult();
         private async Task MainAsync(string[] args)
         {
+            var chromeDriverLocation = await DownloadChromeAndGetChromeDriverLocation();
             var parserResult = Parser.Default.ParseArguments<ScrapingOptions>(args);
             _defaultInterval = new TimeSpan(parserResult.Value.IntervalDays, parserResult.Value.IntervalHours, parserResult.Value.IntervalMinutes, parserResult.Value.IntervalSeconds);
-            ConfigHelper.SetConfigValue("ChromeDriverLocation", parserResult.Value.WebDriverLocation);
+            ConfigHelper.SetConfigValue("ChromeDriverLocation", chromeDriverLocation);
             ConfigHelper.SetConfigValue("IsHeadless", parserResult.Value.IsHeadless ? "true" : "false");
             ScrapeMoversShakersJob();
             await Task.Delay(-1);
@@ -67,6 +75,7 @@ namespace MoversAndShakersScrapingService
                 output = output.TrimEnd(',');
                 Console.WriteLine($"\n {output}");
                 _completedFormats = new List<string>();
+
             }
             else
             {
@@ -116,6 +125,57 @@ namespace MoversAndShakersScrapingService
             _aTimer.Start();
             Console.WriteLine("\n");
             Console.WriteLine(" Timer Reset.");
+        }
+
+        private async Task<string> DownloadChromeAndGetChromeDriverLocation()
+        {
+            var platformName = RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? "linux64" : "win64";
+            using var httpClient = new HttpClient();
+            var documentRequest = await httpClient.GetAsync(new Uri("https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json"));
+            var lastKnownDocument = await documentRequest.Content.ReadAsStringAsync();
+            var deserializedDocumentResponse = JsonConvert.DeserializeObject<ChromeDownloadModel>(lastKnownDocument);
+            var chromeDownloadLink = deserializedDocumentResponse.Channels.Stable.Downloads.Chrome.FirstOrDefault(x => x.Platform == platformName).Url;
+            var chromeDriverDownloadLink = deserializedDocumentResponse.Channels.Stable.Downloads.Chromedriver.FirstOrDefault(x => x.Platform == platformName).Url;
+            var expectedChromeDownloadDirectory = Path.Join(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "ChromeDriver");
+            var expectedDownloadDirectory = Path.Join(expectedChromeDownloadDirectory, $"chrome-{platformName}");
+            var unzippedChromeDriverLocation = Path.Join(expectedChromeDownloadDirectory, $"chromedriver-{platformName}\\chromedriver.exe");
+            var finalUnzippedChromeDriverLocation = Path.Join(expectedChromeDownloadDirectory, $"chrome-{platformName}\\chromedriver.exe");
+
+            if (!Directory.Exists(expectedChromeDownloadDirectory))
+            {
+                Directory.CreateDirectory(expectedChromeDownloadDirectory);
+            }
+
+            var manifestFileLocation = Path.Combine(expectedDownloadDirectory, $"{deserializedDocumentResponse.Channels.Stable.Version}.manifest");
+            if (!File.Exists(manifestFileLocation))
+            {
+                var chromeFilePath = Path.Join(expectedChromeDownloadDirectory, "chrome.zip");
+                var chromeDownload = await httpClient.GetAsync(chromeDownloadLink);
+                var chromeData = await chromeDownload.Content.ReadAsByteArrayAsync();
+                await File.WriteAllBytesAsync(chromeFilePath, chromeData);
+
+                var chromeDriverFilePath = Path.Join(expectedChromeDownloadDirectory, "chromedriver.zip");
+                var chromeDriverDownload = await httpClient.GetAsync(chromeDriverDownloadLink);
+                var chromeDriverData = await chromeDriverDownload.Content.ReadAsByteArrayAsync();
+                await File.WriteAllBytesAsync(chromeDriverFilePath, chromeDriverData);
+
+                ZipFile.ExtractToDirectory(chromeFilePath, expectedChromeDownloadDirectory, true);
+                ZipFile.ExtractToDirectory(chromeDriverFilePath, expectedChromeDownloadDirectory, true);
+
+                File.Move(unzippedChromeDriverLocation, finalUnzippedChromeDriverLocation);
+            }
+
+            return expectedDownloadDirectory;
+        }
+
+        private async Task SendPricingData(string jsonRequest)
+        {
+            var connection = new HubConnectionBuilder()
+                .WithUrl("http://localhost:5000/communicationHub")
+                .Build();
+
+            await connection.StartAsync();
+            await connection.InvokeAsync("SendMessage", jsonRequest);
         }
     }
 }
